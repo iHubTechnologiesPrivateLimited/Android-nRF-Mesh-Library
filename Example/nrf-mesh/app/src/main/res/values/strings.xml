@@ -21,8 +21,8 @@
   -->
 
 <resources>
-    <string name="app_name">nRF Mesh</string>
-    <string name="feature_name">Mesh Provisioner</string>
+    <string name="app_name">Ihub HA</string>
+    <string name="feature_name">Home Automation</string>
 
     <string name="title">@string/app_name</string>
 
@@ -40,7 +40,7 @@
 
     <string name="location_permission_title">LOCATION PERMISSION REQUIRED</string>
     <string name="location_permission_info">From Android 6.0 Marshmallow onwards the application requires Location permission in order to scan for Bluetooth Low Energy devices.
-      \n\nThis is because Bluetooth LE beacons, for example iBeacons or Eddystone, may be used to determine the phone\'s and user\'s location. <b>nRF Mesh Provisioner</b> will not use this information in any way.</string>
+      \n\nThis is because Bluetooth LE beacons, for example iBeacons or Eddystone, may be used to determine the phone\'s and user\'s location. <b>Ihub HA</b> will not use this information in any way.</string>
     <string name="location_permission_action">Grant permission</string>
     <string name="location_permission_settings">Settings</string>
 
@@ -217,9 +217,9 @@
     <string name="configuration_state">Configuration status:</string>
     <string name="configured">Configured</string>
 
-    <string name="nrf_mesh_node">nRF Mesh Node</string>
+    <string name="nrf_mesh_node">Ihub HA Node</string>
     <string name="company">Company:</string>
-    <string name="nordic_semiconductor_asa">Nordic Semiconductor ASA</string>
+    <string name="nordic_semiconductor_asa">Ihub Home Automation</string>
     <string name="elements">Elements:</string>
     <string name="models">Models:</string>
 
@@ -278,8 +278,8 @@
     <string name="not_subscribed_to_groups">Not subscribed to any group addresses.</string>
     <string name="title_group_address">Group Address</string>
     <string name="dialog_summary_group_address">Group address this model should subscribe.</string>
-    <string name="title_configuration_compete">Confguration Complete</string>
-    <string name="configuration_complete_summary">Mesh node has been successfully configured.</string>
+    <string name="title_configuration_compete">Setup Completed</string>
+    <string name="configuration_complete_summary">Switch Board has been successfully configured.</string>
     <string name="action_composition_data">GET COMPOSITION DATA</string>
 
     <string name="action_add_app_keys">ADD</string>
