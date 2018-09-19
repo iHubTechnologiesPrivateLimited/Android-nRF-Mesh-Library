@@ -224,11 +224,14 @@ public class SettingsFragment extends Fragment implements Injectable,
         });
         //        ihub edits start
         containerManageAliasNames.setOnClickListener(v -> {
-            final RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view_provisioned_nodes);
-            final View noNetworksConfiguredView = rootView.findViewById(R.id.no_networks_configured);
-            mViewModel = ViewModelProviders.of(getActivity(), mViewModelFactory).get(SharedViewModel.class);
 
-            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            final Intent intent = new Intent(getActivity(), AliasNameActivity.class);
+            startActivity(intent);
+            // final RecyclerView recyclerView = rootView.findViewById(R.id.alias_name);
+            //final View noNetworksConfiguredView = rootView.findViewById(R.id.no_networks_configured);
+            //mViewModel = ViewModelProviders.of(getActivity(), mViewModelFactory).get(SharedViewModel.class);
+
+           // recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
            // mAdapter = new NodeAdapter(getActivity(), mViewModel.getMeshRepository().getProvisionedNodesLiveData());
             //mAdapter.setOnItemClickListener(this);
            /// recyclerView.setAdapter(mAdapter);
