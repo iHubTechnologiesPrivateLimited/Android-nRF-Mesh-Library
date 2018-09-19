@@ -199,6 +199,7 @@
     <string name="error_invalid_unicast_address">Unicast Address must be between 0 and 32767!</string>
 
     <string name="title_manage_app_keys">Manage App Keys</string>
+
     <string name="title_select_app_key">Select App Key</string>
     <string name="title_app_key">App Key</string>
     <string name="summary_app_key">App Key</string>
@@ -208,6 +209,9 @@
     <string name="no_app_keys_title">NO ADDED APP KEYS</string>
     <string name="no_app_keys_rationale">App keys are required in order to configure a UnprovisionedMeshNode after provisioning has been completed. Please click on the add button to add an app key </string>
     <string name="app_key_deleted">App key deleted.</string>
+    <string name="title_manage_alias_name">Manage Alias Names</string>
+    <string name="summary_alias_name">Alias</string>
+    <string name="alias_name_count">%d Alias</string>
     <string name="undo">Undo</string>
     <string name="title_error_provisioning_failed">Provisioning Failed</string>
     <string name="provisioning_cancelled">Provisioning canceled!</string>

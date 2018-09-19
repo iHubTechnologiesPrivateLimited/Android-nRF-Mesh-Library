@@ -23,9 +23,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        tribhuvan {
+            keyAlias 'ihub'
+            keyPassword '3bu1@ihub'
+            storeFile file('/home/tribhuvan/tribhuvan/homeautomation/BLEautomation/signing/ihubha.jks')
+            storePassword '3bu1@ihub'
+        }
+    }
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
-
     defaultConfig {
         applicationId "no.nordicsemi.android.nrfmeshprovisioner"
         minSdkVersion 18
@@ -42,14 +49,13 @@ android {
             shrinkResources false
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.tribhuvan
         }
     }
-
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-
     dexOptions {
         preDexLibraries = false
     }

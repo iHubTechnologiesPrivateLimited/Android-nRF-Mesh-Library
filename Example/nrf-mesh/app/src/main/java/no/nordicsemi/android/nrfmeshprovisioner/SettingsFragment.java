@@ -31,6 +31,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,10 +40,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import no.nordicsemi.android.meshprovisioner.utils.MeshParserUtils;
+import no.nordicsemi.android.nrfmeshprovisioner.adapter.NodeAdapter;
 import no.nordicsemi.android.nrfmeshprovisioner.di.Injectable;
 import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentFlags;
 import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentGlobalNetworkName;
@@ -56,6 +59,7 @@ import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.SharedViewModel;
 
 import static android.app.Activity.RESULT_OK;
 import static no.nordicsemi.android.nrfmeshprovisioner.ManageAppKeysActivity.RESULT_APP_KEY_LIST_SIZE;
+import android.support.v7.widget.RecyclerView;
 
 public class SettingsFragment extends Fragment implements Injectable,
         DialogFragmentGlobalNetworkName.DialogFragmentNetworkNameListener,
@@ -72,6 +76,10 @@ public class SettingsFragment extends Fragment implements Injectable,
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
     private TextView manageAppKeysView;
+    private TextView manageAliasNamesView;
+
+
+    private NodeAdapter mAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -181,6 +189,16 @@ public class SettingsFragment extends Fragment implements Injectable,
         manageAppKeys.setText(R.string.summary_app_keys);
         manageAppKeysView = containerManageAppKeys.findViewById(R.id.text);
 
+//        ihub edits start
+        final View containerManageAliasNames = rootView.findViewById(R.id.container_alias_names);
+        containerManageAliasNames.findViewById(R.id.image).setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ic_folder_key_black_24dp_alpha));
+        final TextView manageAliasNames = containerManageAliasNames.findViewById(R.id.title);
+        manageAliasNames.setText(R.string.summary_alias_name);
+        manageAliasNamesView = containerManageAliasNames.findViewById(R.id.text);
+
+//        ihub edits end
+
+
         final View containerAbout = rootView.findViewById(R.id.container_version);
         containerAbout.findViewById(R.id.image).setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ic_puzzle));
         final TextView versionTitle = containerAbout.findViewById(R.id.title);
@@ -198,7 +216,29 @@ public class SettingsFragment extends Fragment implements Injectable,
             intent.putExtra(ManageAppKeysActivity.APP_KEYS, new ArrayList<>(appkeys));
             startActivityForResult(intent,  ManageAppKeysActivity.MANAGE_APP_KEYS);
         });
+        //        ihub edits start
+        containerManageAliasNames.setOnClickListener(v -> {
+            final RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view_provisioned_nodes);
+            final View noNetworksConfiguredView = rootView.findViewById(R.id.no_networks_configured);
+            mViewModel = ViewModelProviders.of(getActivity(), mViewModelFactory).get(SharedViewModel.class);
 
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+           // mAdapter = new NodeAdapter(getActivity(), mViewModel.getMeshRepository().getProvisionedNodesLiveData());
+            //mAdapter.setOnItemClickListener(this);
+           /// recyclerView.setAdapter(mAdapter);
+
+            // Create view model containing utility methods for scanning
+//            mViewModel.getMeshRepository().getProvisionedNodesLiveData().observe(this, provisionedNodesLiveData -> {
+//                if(mAdapter.getItemCount() > 0) {
+//                    noNetworksConfiguredView.setVisibility(View.GONE);
+//                } else {
+//                    noNetworksConfiguredView.setVisibility(View.VISIBLE);
+//                }
+//                mAdapter.notifyDataSetChanged();
+//            });
+
+        });
+        //        ihub edits end
         mViewModel.getProvisioningData().observe(this, provisioningData -> {
             if(provisioningData.getProvisioningSettings() != null) {
                 networkNameView.setText(provisioningData.getNetworkName());
@@ -209,6 +249,7 @@ public class SettingsFragment extends Fragment implements Injectable,
                 ivIndexView.setText(getString(R.string.hex_format, String.format(Locale.US, "%08X", provisioningData.getIvIndex())));
                 unicastAddressView.setText(getString(R.string.hex_format, String.format(Locale.US, "%04X", provisioningData.getUnicastAddress())));
                 manageAppKeysView.setText(getString(R.string.app_key_count, provisioningData.getAppKeys().size()));
+                manageAliasNamesView.setText(getString(R.string.alias_name_count, mViewModel.getProvisionedNodesLiveData().getProvisionedNodes().size()));
             }
         });
         mViewModel.getConfigurationSrcLiveData().observe(this, configuratorSrc -> {
