@@ -83,7 +83,7 @@ public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ViewHold
         final Element element = mElements.get(position);
         holder.mElementContainer.setTag(element.getElementAddressInt());
         final int modelCount = element.getSigModelCount() + element.getVendorModelCount();
-        holder.mElementTitle.setText(mContext.getString(R.string.element_address, MeshParserUtils.bytesToHex(element.getElementAddress(), false)));
+        holder.mElementTitle.setText(mProvisionedMeshNode.getNodeName()+mContext.getString(R.string.element_address, MeshParserUtils.bytesToHex(element.getElementAddress(), false)));
         holder.mElementSubtitle.setText(mContext.getString(R.string.model_count, modelCount));
 
         final List<MeshModel> models = new ArrayList<>(element.getMeshModels().values());

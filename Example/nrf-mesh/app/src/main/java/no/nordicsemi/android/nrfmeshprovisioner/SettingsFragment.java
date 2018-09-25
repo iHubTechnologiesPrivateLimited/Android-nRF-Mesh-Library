@@ -41,6 +41,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -226,25 +227,12 @@ public class SettingsFragment extends Fragment implements Injectable,
         containerManageAliasNames.setOnClickListener(v -> {
 
             final Intent intent = new Intent(getActivity(), AliasNameActivity.class);
+            //final Map nodes = ;
+           // HashMap nodes = new HashMap();
+           // nodes.put("nodelist",mViewModel.getProvisionedNodesLiveData().getProvisionedNodes());
+            //intent.putExtra(AliasNameActivity.ALIAS_KEYS, nodes);
+           // startActivityForResult(intent,  AliasNameActivity.MANAGE_ALIAS_NAMES);
             startActivity(intent);
-            // final RecyclerView recyclerView = rootView.findViewById(R.id.alias_name);
-            //final View noNetworksConfiguredView = rootView.findViewById(R.id.no_networks_configured);
-            //mViewModel = ViewModelProviders.of(getActivity(), mViewModelFactory).get(SharedViewModel.class);
-
-           // recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-           // mAdapter = new NodeAdapter(getActivity(), mViewModel.getMeshRepository().getProvisionedNodesLiveData());
-            //mAdapter.setOnItemClickListener(this);
-           /// recyclerView.setAdapter(mAdapter);
-
-            // Create view model containing utility methods for scanning
-//            mViewModel.getMeshRepository().getProvisionedNodesLiveData().observe(this, provisionedNodesLiveData -> {
-//                if(mAdapter.getItemCount() > 0) {
-//                    noNetworksConfiguredView.setVisibility(View.GONE);
-//                } else {
-//                    noNetworksConfiguredView.setVisibility(View.VISIBLE);
-//                }
-//                mAdapter.notifyDataSetChanged();
-//            });
 
         });
         //        ihub edits end
@@ -303,6 +291,11 @@ public class SettingsFragment extends Fragment implements Injectable,
             if(resultCode == RESULT_OK){
                 final int size = data.getExtras().getInt(RESULT_APP_KEY_LIST_SIZE);
                 manageAppKeysView.setText(getString(R.string.app_key_count, size));
+            }
+        }
+       else if(requestCode == AliasNameActivity.MANAGE_ALIAS_NAMES){
+            if(resultCode == RESULT_OK){
+                //String result = data.getExtras().ge("result");
             }
         }
     }

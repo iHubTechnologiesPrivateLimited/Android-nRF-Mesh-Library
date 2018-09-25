@@ -119,8 +119,8 @@
     <string name="node_replay_protection_count">Replay Protection Count</string>
     <string name="node_features">Node Features</string>
 
-    <string name="title_elements">Elements</string>
-    <string name="title_node_element_details">Element Details</string>
+    <string name="title_elements">Lights</string>
+    <string name="title_node_element_details">Light Details</string>
 
     <string name="title_node_app_keys">Application Keys</string>
     <string name="generate_app_key">Generate app key</string>
@@ -225,7 +225,7 @@
     <string name="nrf_mesh_node">Ihub HA Node</string>
     <string name="company">Company:</string>
     <string name="nordic_semiconductor_asa">Ihub Home Automation</string>
-    <string name="elements">Elements:</string>
+    <string name="elements">Lights:</string>
     <string name="models">Models:</string>
 
     <string name="get_composition_data_action">Get Composition Data</string>
@@ -233,7 +233,7 @@
     <string name="app_key_item">App key %d</string>
     <string name="app_key_index_item">Key Index: %d</string>
     <string name="error_node_name">Node name cannot be empty!</string>
-    <string name="element_address">Element : %s</string>
+    <string name="element_address">Light : %s</string>
     <string name="model_count">%d Models</string>
     <string name="title_model_configuration">Model Configuration</string>
     <string name="subtitle_model_configuration">%s %s</string>
@@ -328,7 +328,7 @@
     <string name="title_transaction_failed">Transaction Failed</string>
     <string name="segments_not_received_timed_out">All message segments were not received, operation timed out!</string>
     <string name="operation_timed_out">Operation timed out</string>
-    <string name="element_count_title">Element Count</string>
+    <string name="element_count_title">Light Count</string>
     <string name="supported_algorithms_title">Supported Algorithms</string>
     <string name="public_key_type_title">Public Key Type</string>
     <string name="static_oob_type_title">Static OOB Type</string>
