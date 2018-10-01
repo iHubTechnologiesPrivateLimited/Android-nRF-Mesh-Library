@@ -96,8 +96,6 @@
             android:name=".service.MeshService"
             android:exported="false"></service>
 
-        <activity android:name=".AliasNameActivity"
-            android:parentActivityName=".MainActivity"></activity>
     </application>
 
 </manifest>

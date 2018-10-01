@@ -86,11 +86,9 @@ public class ManageAppKeysActivity extends AppCompatActivity implements Injectab
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_app_keys);
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ManageAppKeysViewModel.class);
-
-        //If the component name is not null then we know that the activity requested a result
+       //If the component name is not null then we know that the activity requested a result
         final ComponentName componentName = getCallingActivity();
-
-        //Bind ui
+         //Bind ui
         ButterKnife.bind(this);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);

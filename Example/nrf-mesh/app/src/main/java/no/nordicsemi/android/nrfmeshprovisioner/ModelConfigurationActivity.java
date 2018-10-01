@@ -53,6 +53,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -73,6 +75,7 @@ import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentConfigurati
 import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentDisconnected;
 import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentSubscriptionAddress;
 import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentTransactionStatus;
+import no.nordicsemi.android.nrfmeshprovisioner.service.MeshService;
 import no.nordicsemi.android.nrfmeshprovisioner.utils.HexKeyListener;
 import no.nordicsemi.android.nrfmeshprovisioner.utils.Utils;
 import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.ModelConfigurationViewModel;
@@ -135,7 +138,7 @@ public class ModelConfigurationActivity extends AppCompatActivity implements Inj
     private BoundAppKeysAdapter mBoundAppKeyAdapter;
     private Button mActionOnOff;
     private Button mActionRead;
-
+    MeshService.MeshServiceBinder mBinder;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,6 +153,10 @@ public class ModelConfigurationActivity extends AppCompatActivity implements Inj
 
         if(meshNode == null)
             finish();
+
+
+
+        //mBinder.sendBindAppKey( meshNode, mViewModel.getExtendedMeshNode().ge, modelId, 0);
 
         final String modelName = intent.getStringExtra(EXTRA_DATA_MODEL_NAME);
 
@@ -197,6 +204,7 @@ public class ModelConfigurationActivity extends AppCompatActivity implements Inj
             startActivityForResult(bindAppKeysIntent, ManageAppKeysActivity.SELECT_APP_KEY);
         });
 
+
         mPublishAddressView.setText(R.string.none);
         mActionSetPublication.setOnClickListener(v -> {
             final MeshModel meshModel = mViewModel.getMeshModel().getValue();
@@ -232,6 +240,8 @@ public class ModelConfigurationActivity extends AppCompatActivity implements Inj
                 final List<Integer> keys = meshModel.getBoundAppKeyIndexes();
                 mKeyIndexes.clear();
                 mKeyIndexes.addAll(keys);
+               // Toast.makeText(getApplicationContext(), "in observe "+mKeyIndexes.size(), Toast.LENGTH_SHORT).show();
+
                 if (!keys.isEmpty()) {
                     mUnbindHint.setVisibility(View.VISIBLE);
                     mAppKeyView.setVisibility(View.GONE);
@@ -307,7 +317,30 @@ public class ModelConfigurationActivity extends AppCompatActivity implements Inj
         });
 
         addNodeControlsUi();
+        //        ihub edits start
+        final Handler handler = new Handler();
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        if(mKeyIndexes.size()==0) {
+                            final Intent bindAppKeysIntent = new Intent(ModelConfigurationActivity.this, BindAppKeysActivity.class);
+                            final ProvisionedMeshNode node = ((ProvisionedMeshNode) mViewModel.getExtendedMeshNode().getMeshNode());
+                            bindAppKeysIntent.putExtra(ManageAppKeysActivity.APP_KEYS, (Serializable) node.getAddedAppKeys());
+                            startActivityForResult(bindAppKeysIntent, ManageAppKeysActivity.SELECT_APP_KEY);
 
+                           // Toast.makeText(getApplicationContext(), "Binded app key", Toast.LENGTH_SHORT).show();
+                        }
+                       // Toast.makeText(getApplicationContext(), "Binded app key "+mKeyIndexes.size(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+        }, 1000);
+
+
+        //        ihub edits end0
     }
 
     @Override

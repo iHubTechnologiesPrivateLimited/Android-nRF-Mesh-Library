@@ -198,43 +198,43 @@
             </android.support.v7.widget.CardView>
 
 
-            <!--ihub edits start-->
-            <android.support.v7.widget.CardView
-                android:id="@+id/alias_name_settings_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/activity_horizontal_margin"
-                android:background="@android:color/white"
-                app:cardElevation="1dp">
+            <!--&lt;!&ndash;ihub edits start&ndash;&gt;-->
+            <!--<android.support.v7.widget.CardView-->
+                <!--android:id="@+id/alias_name_settings_card"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="@dimen/activity_horizontal_margin"-->
+                <!--android:background="@android:color/white"-->
+                <!--app:cardElevation="1dp">-->
 
-                <android.support.constraint.ConstraintLayout
-                    android:id="@+id/alias_name_settings_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                <!--<android.support.constraint.ConstraintLayout-->
+                    <!--android:id="@+id/alias_name_settings_container"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent">-->
 
-                    <android.support.v7.widget.Toolbar
-                        android:id="@+id/alias_name_settings_tool_bar"
-                        android:layout_width="0dp"
-                        android:layout_height="?actionBarSize"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:logo="@drawable/ic_assignment"
-                        app:title="@string/title_manage_alias_name"
-                        app:titleMarginStart="@dimen/toolbar_title_margin"/>
+                    <!--<android.support.v7.widget.Toolbar-->
+                        <!--android:id="@+id/alias_name_settings_tool_bar"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="?actionBarSize"-->
+                        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+                        <!--app:layout_constraintRight_toRightOf="parent"-->
+                        <!--app:layout_constraintTop_toTopOf="parent"-->
+                        <!--app:logo="@drawable/ic_assignment"-->
+                        <!--app:title="@string/title_manage_alias_name"-->
+                        <!--app:titleMarginStart="@dimen/toolbar_title_margin"/>-->
 
-                    <include
-                        android:id="@+id/container_alias_names"
-                        layout="@layout/layout_container"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/alias_name_settings_tool_bar"/>
+                    <!--<include-->
+                        <!--android:id="@+id/container_alias_names"-->
+                        <!--layout="@layout/layout_container"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+                        <!--app:layout_constraintRight_toRightOf="parent"-->
+                        <!--app:layout_constraintTop_toBottomOf="@+id/alias_name_settings_tool_bar"/>-->
 
-                </android.support.constraint.ConstraintLayout>
-            </android.support.v7.widget.CardView>
-            <!--ihub edits end-->
+                <!--</android.support.constraint.ConstraintLayout>-->
+            <!--</android.support.v7.widget.CardView>-->
+            <!--&lt;!&ndash;ihub edits end&ndash;&gt;-->
 
             <android.support.v7.widget.CardView
                 android:id="@+id/about_card"
