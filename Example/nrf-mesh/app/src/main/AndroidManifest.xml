@@ -70,34 +70,43 @@
         <activity
             android:name=".ManageAppKeysActivity"
             android:launchMode="singleTop"></activity>
+
         <activity
             android:name=".MeshProvisionerActivity"
-            android:launchMode="singleTop"></activity>
+            android:launchMode="singleTop"/>
         <activity
             android:name=".NodeConfigurationActivity"
-            android:launchMode="singleTop"></activity>
-        <activity
-            android:name=".ModelConfigurationActivity"
-            android:launchMode="singleTop"></activity>
+            android:launchMode="singleTop"/>
         <activity
             android:name=".PublicationSettingsActivity"
-            android:launchMode="singleTop"></activity>
+            android:launchMode="singleTop"/>
         <activity
             android:name=".NodeDetailsActivity"
-            android:launchMode="singleTop"></activity>
+            android:launchMode="singleTop"/>
         <activity
             android:name=".ManageNodeAppKeysActivity"
-            android:launchMode="singleTop"></activity>
+            android:launchMode="singleTop"/>
         <activity
             android:name=".BindAppKeysActivity"
-            android:launchMode="singleTop"></activity>
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".GenericLevelServerActivity"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".GenericOnOffServerActivity"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".VendorModelActivity"
+            android:launchMode="singleTop"/>
+        <activity
+            android:name=".ModelConfigurationActivity"
+            android:launchMode="singleTop"/>
 
         <service
             android:name=".service.MeshService"
-            android:exported="false"></service>
+            android:exported="false">
+        </service>
 
-        <activity android:name=".AliasNameActivity"
-            android:parentActivityName=".MainActivity"></activity>
     </application>
 
 </manifest>
