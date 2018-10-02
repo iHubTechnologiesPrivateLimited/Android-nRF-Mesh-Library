@@ -35,6 +35,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -84,6 +85,15 @@ public class BindAppKeysActivity extends AppCompatActivity implements BindAppKey
 
         final boolean empty = mAdapter.getItemCount() == 0;
         mEmptyView.setVisibility(empty ? View.VISIBLE : View.GONE);
+
+//        ihub edits start
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(RESULT_APP_KEY_INDEX, 0);
+        returnIntent.putExtra(RESULT_APP_KEY, mAppKeysMap.get(0));
+        setResult(Activity.RESULT_OK, returnIntent);
+       // Toast.makeText(getApplicationContext(),"In app keys",Toast.LENGTH_SHORT).show();
+        finish();
+//        ihub edits end
     }
 
     @Override

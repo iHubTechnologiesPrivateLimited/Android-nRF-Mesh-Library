@@ -197,11 +197,11 @@ public class SettingsFragment extends Fragment implements Injectable,
         manageAppKeysView = containerManageAppKeys.findViewById(R.id.text);
 
 //        ihub edits start
-        final View containerManageAliasNames = rootView.findViewById(R.id.container_alias_names);
-        containerManageAliasNames.findViewById(R.id.image).setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ic_folder_key_black_24dp_alpha));
-        final TextView manageAliasNames = containerManageAliasNames.findViewById(R.id.title);
-        manageAliasNames.setText(R.string.summary_alias_name);
-        manageAliasNamesView = containerManageAliasNames.findViewById(R.id.text);
+//        final View containerManageAliasNames = rootView.findViewById(R.id.container_alias_names);
+//        containerManageAliasNames.findViewById(R.id.image).setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ic_folder_key_black_24dp_alpha));
+//        final TextView manageAliasNames = containerManageAliasNames.findViewById(R.id.title);
+//        manageAliasNames.setText(R.string.summary_alias_name);
+//        manageAliasNamesView = containerManageAliasNames.findViewById(R.id.text);
 
 //        ihub edits end
 
@@ -224,17 +224,17 @@ public class SettingsFragment extends Fragment implements Injectable,
             startActivityForResult(intent,  ManageAppKeysActivity.MANAGE_APP_KEYS);
         });
         //        ihub edits start
-        containerManageAliasNames.setOnClickListener(v -> {
-
-            final Intent intent = new Intent(getActivity(), AliasNameActivity.class);
-            //final Map nodes = ;
-           // HashMap nodes = new HashMap();
-           // nodes.put("nodelist",mViewModel.getProvisionedNodesLiveData().getProvisionedNodes());
-            //intent.putExtra(AliasNameActivity.ALIAS_KEYS, nodes);
-           // startActivityForResult(intent,  AliasNameActivity.MANAGE_ALIAS_NAMES);
-            startActivity(intent);
-
-        });
+//        containerManageAliasNames.setOnClickListener(v -> {
+//
+//            final Intent intent = new Intent(getActivity(), AliasNameActivity.class);
+//            //final Map nodes = ;
+//           // HashMap nodes = new HashMap();
+//           // nodes.put("nodelist",mViewModel.getProvisionedNodesLiveData().getProvisionedNodes());
+//            //intent.putExtra(AliasNameActivity.ALIAS_KEYS, nodes);
+//           // startActivityForResult(intent,  AliasNameActivity.MANAGE_ALIAS_NAMES);
+//            startActivity(intent);
+//
+//        });
         //        ihub edits end
         mViewModel.getProvisioningData().observe(this, provisioningData -> {
             if(provisioningData.getProvisioningSettings() != null) {
@@ -246,7 +246,7 @@ public class SettingsFragment extends Fragment implements Injectable,
                 ivIndexView.setText(getString(R.string.hex_format, String.format(Locale.US, "%08X", provisioningData.getIvIndex())));
                 unicastAddressView.setText(getString(R.string.hex_format, String.format(Locale.US, "%04X", provisioningData.getUnicastAddress())));
                 manageAppKeysView.setText(getString(R.string.app_key_count, provisioningData.getAppKeys().size()));
-                manageAliasNamesView.setText(getString(R.string.alias_name_count, mViewModel.getProvisionedNodesLiveData().getProvisionedNodes().size()));
+                //manageAliasNamesView.setText(getString(R.string.alias_name_count, mViewModel.getProvisionedNodesLiveData().getProvisionedNodes().size()));
             }
         });
         mViewModel.getConfigurationSrcLiveData().observe(this, configuratorSrc -> {
@@ -293,11 +293,7 @@ public class SettingsFragment extends Fragment implements Injectable,
                 manageAppKeysView.setText(getString(R.string.app_key_count, size));
             }
         }
-       else if(requestCode == AliasNameActivity.MANAGE_ALIAS_NAMES){
-            if(resultCode == RESULT_OK){
-                //String result = data.getExtras().ge("result");
-            }
-        }
+
     }
 
     private String parseFlagsMessage(final int flags) {
