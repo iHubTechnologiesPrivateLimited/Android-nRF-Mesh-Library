@@ -43,6 +43,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -297,6 +299,35 @@ public abstract class BaseModelConfigurationActivity extends AppCompatActivity i
         });
 
         addControlsUi(mViewModel.getMeshModel().getValue());
+
+
+
+        //        ihub edits start
+        final Handler handler = new Handler();
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        if (mKeyIndexes.size() == 0) {
+                            final Intent bindAppKeysIntent = new Intent(BaseModelConfigurationActivity.this, BindAppKeysActivity.class);
+                            final ProvisionedMeshNode node = ((ProvisionedMeshNode)mViewModel.getExtendedMeshNode().getMeshNode());
+                            bindAppKeysIntent.putExtra(ManageAppKeysActivity.APP_KEYS, (Serializable) node.getAddedAppKeys());
+                            startActivityForResult(bindAppKeysIntent, ManageAppKeysActivity.SELECT_APP_KEY);
+
+                            // Toast.makeText(getApplicationContext(), "Binded app key", Toast.LENGTH_SHORT).show();
+                        }
+                        // Toast.makeText(getApplicationContext(), "Binded app key "+mKeyIndexes.size(), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+        }, 1000);
+
+
+        //        ihub edits end0
+
+
     }
 
     @Override
