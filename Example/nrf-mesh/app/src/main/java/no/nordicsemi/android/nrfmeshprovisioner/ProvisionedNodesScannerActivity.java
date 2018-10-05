@@ -29,6 +29,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -41,6 +42,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -53,13 +58,14 @@ import no.nordicsemi.android.nrfmeshprovisioner.di.Injectable;
 import no.nordicsemi.android.nrfmeshprovisioner.utils.Utils;
 import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.ProvisionedNodesScannerViewModel;
 import no.nordicsemi.android.nrfmeshprovisioner.livedata.ScannerLiveData;
+import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.SharedViewModel;
 
 public class ProvisionedNodesScannerActivity extends AppCompatActivity implements Injectable, DevicesAdapter.OnItemClickListener {
 	private static final int REQUEST_ACCESS_COARSE_LOCATION = 1022; // random number
 	public static int CONNECT_TO_NETWORK = 1023; //random number
 	public static final String SELECTED_NODE = "SELECTED_NODE";
 	public static final String NETWORK_ID = "NETWORK_ID";
-
+	SharedViewModel mSharedViewModel;
 	@Inject
 	ViewModelProvider.Factory mViewModelFactory;
 
@@ -101,12 +107,50 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 		final DevicesAdapter adapter = new DevicesAdapter(this, mViewModel.getScannerState());
 		adapter.setOnItemClickListener(this);
 		recyclerViewDevices.setAdapter(adapter);
+		//Toast.makeText(this, " searching  ", Toast.LENGTH_SHORT).show();
 
 		mViewModel.isDeviceReady().observe(this, isDeviceReady -> {
+			//Toast.makeText(this, " searching  "+ isDeviceReady, Toast.LENGTH_SHORT).show();
+
 			if(isDeviceReady){
+				//Toast.makeText(this, " Found devices in if ", Toast.LENGTH_SHORT).show();
 				finish();
 			}
 		});
+
+		mViewModel.getScannerState().observe(this, ScannerLiveData-> {
+			//Toast.makeText(this, " Found observe ", Toast.LENGTH_SHORT).show();
+
+			if(ScannerLiveData.getDevices().size()>0){
+				//Toast.makeText(this," mSharedViewModel "+ mSharedViewModel.getProvisionedNodesLiveData().getProvisionedNodes().get(0).getNodeName(), Toast.LENGTH_SHORT).show();
+				//Toast.makeText(this, " Found devices "+ScannerLiveData.getDevices().get(0), Toast.LENGTH_SHORT).show();
+				final Handler handler = new Handler();
+				Timer t = new Timer();
+				t.schedule(new TimerTask() {
+					public void run() {
+						handler.post(new Runnable() {
+							public void run() {
+								for(ExtendedBluetoothDevice device: ScannerLiveData.getDevices()){
+									//Toast.makeText(this, " Found device ", Toast.LENGTH_SHORT).show();
+									stopScan();
+									final Intent meshProvisionerIntent = new Intent(getApplicationContext(), ReconnectActivity.class);
+									meshProvisionerIntent.putExtra(Utils.EXTRA_DEVICE, device);
+									startActivityForResult(meshProvisionerIntent, ReconnectActivity.REQUEST_DEVICE_READY);
+
+
+								}
+							}
+						});
+					}
+				},2000);
+
+
+
+			}
+
+		});
+
+
 
 	}
 
@@ -133,6 +177,8 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 			if(resultCode == RESULT_OK){
 				final boolean isDeviceReady = data.getBooleanExtra(Utils.ACTIVITY_RESULT, false);
 				if(isDeviceReady){
+					//Toast.makeText(this, " Found device "+isDeviceReady, Toast.LENGTH_SHORT).show();
+
 					finish();
 				}
 			}

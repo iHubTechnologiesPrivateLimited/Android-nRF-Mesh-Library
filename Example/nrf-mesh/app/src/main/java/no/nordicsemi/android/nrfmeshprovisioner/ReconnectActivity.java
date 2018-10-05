@@ -33,6 +33,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -70,22 +71,29 @@ public class ReconnectActivity extends AppCompatActivity implements Injectable {
         final TextView connectionState = findViewById(R.id.connection_state);
 		// Create view model containing utility methods for scanning
 		mReconnectViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ReconnectViewModel.class);
-
+		//Toast.makeText(this, " Not yet Connected ", Toast.LENGTH_SHORT).show();
 		mReconnectViewModel.connect(device);
 		mReconnectViewModel.isConnected().observe(this, isConnected -> {
+
 			if(!isConnected){
 				finish();
+			}else{
+				//Toast.makeText(this, "  Connected ", Toast.LENGTH_SHORT).show();
+
 			}
 		});
 
 		mReconnectViewModel.getConnectionState().observe(this, connectionState::setText);
 
 		mReconnectViewModel.isDeviceReady().observe(this, deviceReady -> {
-		    if(deviceReady) {
-                Intent returnIntent = new Intent();
+			if(deviceReady) {
+				Intent returnIntent = new Intent();
                 returnIntent.putExtra(Utils.ACTIVITY_RESULT, true);
                 setResult(Activity.RESULT_OK, returnIntent);
-                finish();
+				//Toast.makeText(this, "  deviceReady ", Toast.LENGTH_SHORT).show();
+
+				finish();
+
             }
 		});
 

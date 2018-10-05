@@ -30,6 +30,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,6 +44,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
+
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -62,7 +68,6 @@ public class ScannerFragment extends Fragment implements Injectable, DevicesAdap
     private static final int REQUEST_ACCESS_COARSE_LOCATION = 1022; // random number
 
     SharedViewModel mSharedViewModel;
-
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
 
@@ -109,6 +114,7 @@ public class ScannerFragment extends Fragment implements Injectable, DevicesAdap
         final DevicesAdapter adapter = new DevicesAdapter(this, mSharedViewModel.getScannerRepository().getScannerState());
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
+
         return rootView;
 
     }
