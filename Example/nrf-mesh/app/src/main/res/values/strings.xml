@@ -193,6 +193,7 @@
     <string name="configure">Configure</string>
     <string name="node_id">Node ID: %d</string>
     <string name="network">Network</string>
+    <string name="uinterface">Interface</string>
     <string name="action_settings">Settings</string>
     <string name="action_scanner">Scanner</string>
     <string name="no_networks_configured_title">NO NETWORKS CONFIGURED</string>
@@ -210,8 +211,8 @@
     <string name="no_app_keys_title">NO ADDED APP KEYS</string>
     <string name="no_app_keys_rationale">App keys are required in order to configure a UnprovisionedMeshNode after provisioning has been completed. Please click on the add button to add an app key </string>
     <string name="app_key_deleted">App key deleted.</string>
-    <!--<string name="title_manage_alias_name">Manage Alias Names</string>-->
-    <!--<string name="summary_alias_name">Alias</string>-->
+    <string name="title_manage_ui">User Interface Settings</string>
+    <string name="summary_ui">User Interface</string>
     <!--<string name="alias_name_count">%d Alias</string>-->
     <string name="undo">Undo</string>
     <string name="title_error_provisioning_failed">Provisioning Failed</string>
@@ -405,4 +406,5 @@
     <string name="generic_level_percent">%d%%</string>
     <string name="title_generic_level_controls">Generic Level Controls</string>
     <string name="invalid_value">Invalid value!</string>
+    <string name="title_activity_ui">ui</string>
 </resources>

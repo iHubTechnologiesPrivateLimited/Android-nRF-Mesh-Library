@@ -24,6 +24,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_ui"
+        android:enabled="true"
+        android:icon="@drawable/ic_lan_black"
+        android:title="@string/uinterface"
+        app:showAsAction="always"/>
+    <item
         android:id="@+id/action_network"
         android:enabled="true"
         android:icon="@drawable/ic_lan_black"

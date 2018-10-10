@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements Injectable, HasSu
     private NetworkFragment mNetworkFragment;
     private ScannerFragment mScannerFragment;
     private Fragment mSettingsFragment;
-
+    private uiFragment mUiFragment;
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,9 +89,12 @@ public class MainActivity extends AppCompatActivity implements Injectable, HasSu
 
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SharedViewModel.class);
 
+        mUiFragment = (uiFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_ui);
         mNetworkFragment = (NetworkFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_network);
         mScannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_scanner);
         mSettingsFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_settings);
+
+
         mBottomNavigationView = findViewById(R.id.bottom_navigation_view);
 
         mBottomNavigationView.setOnNavigationItemSelectedListener(this);
@@ -174,13 +177,16 @@ public class MainActivity extends AppCompatActivity implements Injectable, HasSu
         final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         switch (id) {
             case R.id.action_network:
-                ft.show(mNetworkFragment).hide(mScannerFragment).hide(mSettingsFragment);
+                ft.show(mNetworkFragment).hide(mScannerFragment).hide(mSettingsFragment).hide(mUiFragment);
                 break;
             case R.id.action_scanner:
-                ft.hide(mNetworkFragment).show(mScannerFragment).hide(mSettingsFragment);
+                ft.hide(mNetworkFragment).show(mScannerFragment).hide(mSettingsFragment).hide(mUiFragment);
                 break;
             case R.id.action_settings:
-                ft.hide(mNetworkFragment).hide(mScannerFragment).show(mSettingsFragment);
+                ft.hide(mNetworkFragment).hide(mScannerFragment).show(mSettingsFragment).hide(mUiFragment);
+                break;
+            case R.id.action_ui:
+                ft.hide(mNetworkFragment).hide(mScannerFragment).hide(mSettingsFragment).show(mUiFragment);
                 break;
         }
         ft.commit();

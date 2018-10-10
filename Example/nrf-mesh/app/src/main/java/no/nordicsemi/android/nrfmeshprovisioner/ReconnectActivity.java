@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -74,11 +75,11 @@ public class ReconnectActivity extends AppCompatActivity implements Injectable {
 		//Toast.makeText(this, " Not yet Connected ", Toast.LENGTH_SHORT).show();
 		mReconnectViewModel.connect(device);
 		mReconnectViewModel.isConnected().observe(this, isConnected -> {
-
+			Log.d("connectAuto", ":: "+isConnected);
 			if(!isConnected){
 				finish();
 			}else{
-				//Toast.makeText(this, "  Connected ", Toast.LENGTH_SHORT).show();
+				Log.d("connectAuto", ":: connected");
 
 			}
 		});
@@ -90,8 +91,7 @@ public class ReconnectActivity extends AppCompatActivity implements Injectable {
 				Intent returnIntent = new Intent();
                 returnIntent.putExtra(Utils.ACTIVITY_RESULT, true);
                 setResult(Activity.RESULT_OK, returnIntent);
-				//Toast.makeText(this, "  deviceReady ", Toast.LENGTH_SHORT).show();
-
+				Log.d("connectAuto", " :: returnIntent "+true);
 				finish();
 
             }

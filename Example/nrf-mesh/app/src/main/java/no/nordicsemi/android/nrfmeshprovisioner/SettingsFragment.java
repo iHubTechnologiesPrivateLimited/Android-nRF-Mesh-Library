@@ -32,12 +32,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -65,6 +67,7 @@ import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.SharedViewModel;
 import static android.app.Activity.RESULT_OK;
 import static no.nordicsemi.android.nrfmeshprovisioner.ManageAppKeysActivity.RESULT_APP_KEY_LIST_SIZE;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ToggleButton;
 
 public class SettingsFragment extends Fragment implements Injectable,
         DialogFragmentGlobalNetworkName.DialogFragmentNetworkNameListener,
@@ -203,6 +206,16 @@ public class SettingsFragment extends Fragment implements Injectable,
 //        manageAliasNames.setText(R.string.summary_alias_name);
 //        manageAliasNamesView = containerManageAliasNames.findViewById(R.id.text);
 
+//        ToggleButton toggle = (ToggleButton) rootView.findViewById(R.id.ui_settings_card);
+//        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    Log.d("UI", "ToggleButton");
+//                } else {
+//                    // The toggle is disabled
+//                }
+//            }
+//        });
 //        ihub edits end
 
 

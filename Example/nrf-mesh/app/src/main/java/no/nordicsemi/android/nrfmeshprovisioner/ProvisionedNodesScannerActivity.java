@@ -39,6 +39,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -79,7 +80,7 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 
 	private ProvisionedNodesScannerViewModel mViewModel;
 	private String mNetworkId;
-
+	private boolean isdeviceconnected = false;
 	@Override
 	protected void onCreate(@Nullable final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -113,7 +114,7 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 			//Toast.makeText(this, " searching  "+ isDeviceReady, Toast.LENGTH_SHORT).show();
 
 			if(isDeviceReady){
-				//Toast.makeText(this, " Found devices in if ", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(this, " isDeviceReady in if "+isDeviceReady, Toast.LENGTH_SHORT).show();
 				finish();
 			}
 		});
@@ -121,9 +122,9 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 		mViewModel.getScannerState().observe(this, ScannerLiveData-> {
 			//Toast.makeText(this, " Found observe ", Toast.LENGTH_SHORT).show();
 
-			if(ScannerLiveData.getDevices().size()>0){
-				//Toast.makeText(this," mSharedViewModel "+ mSharedViewModel.getProvisionedNodesLiveData().getProvisionedNodes().get(0).getNodeName(), Toast.LENGTH_SHORT).show();
-				//Toast.makeText(this, " Found devices "+ScannerLiveData.getDevices().get(0), Toast.LENGTH_SHORT).show();
+			if(ScannerLiveData.getDevices().size()>0 && !isdeviceconnected){
+				//Toast.makeText(this," mSharedViewModel "+ , Toast.LENGTH_SHORT).show();
+				//Toast.makeText(this, " Found devices "+ScannerLiveData.getDevices().get(0).getDevice().getName(), Toast.LENGTH_SHORT).show();
 				final Handler handler = new Handler();
 				Timer t = new Timer();
 				t.schedule(new TimerTask() {
@@ -131,7 +132,8 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 						handler.post(new Runnable() {
 							public void run() {
 								for(ExtendedBluetoothDevice device: ScannerLiveData.getDevices()){
-									//Toast.makeText(this, " Found device ", Toast.LENGTH_SHORT).show();
+									//Toast.makeText(getApplicationContext(), " Found device ", Toast.LENGTH_SHORT).show();
+									Log.d("connectAuto", "ScannerLiveData");
 									stopScan();
 									final Intent meshProvisionerIntent = new Intent(getApplicationContext(), ReconnectActivity.class);
 									meshProvisionerIntent.putExtra(Utils.EXTRA_DEVICE, device);
@@ -142,7 +144,7 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 							}
 						});
 					}
-				},2000);
+				},1000);
 
 
 
@@ -173,13 +175,13 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 	@Override
 	protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		Log.d("connectAuto", "onActivityResult");
 		if(requestCode == ReconnectActivity.REQUEST_DEVICE_READY){
 			if(resultCode == RESULT_OK){
 				final boolean isDeviceReady = data.getBooleanExtra(Utils.ACTIVITY_RESULT, false);
+				isdeviceconnected = isDeviceReady;
 				if(isDeviceReady){
-					//Toast.makeText(this, " Found device "+isDeviceReady, Toast.LENGTH_SHORT).show();
-
-					finish();
+						finish();
 				}
 			}
 		}
