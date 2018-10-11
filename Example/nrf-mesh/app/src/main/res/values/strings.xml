@@ -106,7 +106,7 @@
     <string name="ok">OK</string>
 
     <string name="global_settings">Global Settings</string>
-
+    <string name="global_ui">Global UI</string>
     <string name="title_node_details">Node Details</string>
     <string name="node_name">Name</string>
     <string name="node_prov_timestamp">Provisioned Time</string>

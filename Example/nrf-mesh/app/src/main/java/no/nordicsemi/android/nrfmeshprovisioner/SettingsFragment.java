@@ -32,6 +32,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -85,7 +86,6 @@ public class SettingsFragment extends Fragment implements Injectable,
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
     private TextView manageAppKeysView;
-    private TextView manageAliasNamesView;
 
 
     private NodeAdapter mAdapter;
@@ -206,16 +206,19 @@ public class SettingsFragment extends Fragment implements Injectable,
 //        manageAliasNames.setText(R.string.summary_alias_name);
 //        manageAliasNamesView = containerManageAliasNames.findViewById(R.id.text);
 
-//        ToggleButton toggle = (ToggleButton) rootView.findViewById(R.id.ui_settings_card);
-//        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
-//                    Log.d("UI", "ToggleButton");
-//                } else {
-//                    // The toggle is disabled
-//                }
-//            }
-//        });
+        SwitchCompat switchCompat;
+        switchCompat = (SwitchCompat) rootView.findViewById(R.id.ui_settings_card);
+
+        switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Log.d("UI", "true");
+                } else {
+                    Log.d("UI", "false");
+                }
+            }
+        });
 //        ihub edits end
 
 
