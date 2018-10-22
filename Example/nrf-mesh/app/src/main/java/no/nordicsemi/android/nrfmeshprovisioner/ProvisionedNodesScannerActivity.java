@@ -122,29 +122,30 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 		mViewModel.getScannerState().observe(this, ScannerLiveData-> {
 			//Toast.makeText(this, " Found observe ", Toast.LENGTH_SHORT).show();
 
-			if(ScannerLiveData.getDevices().size()>0 && !isdeviceconnected){
+			if(ScannerLiveData.getDevices().size()>0){
 				//Toast.makeText(this," mSharedViewModel "+ , Toast.LENGTH_SHORT).show();
 				//Toast.makeText(this, " Found devices "+ScannerLiveData.getDevices().get(0).getDevice().getName(), Toast.LENGTH_SHORT).show();
-				final Handler handler = new Handler();
-				Timer t = new Timer();
-				t.schedule(new TimerTask() {
-					public void run() {
-						handler.post(new Runnable() {
-							public void run() {
+				stopScan();
 								for(ExtendedBluetoothDevice device: ScannerLiveData.getDevices()){
 									//Toast.makeText(getApplicationContext(), " Found device ", Toast.LENGTH_SHORT).show();
+									final Handler handler = new Handler();
+									Timer t = new Timer();
+									t.schedule(new TimerTask() {
+										public void run() {
+											handler.post(new Runnable() {
+												public void run() {
 									Log.d("connectAuto", "ScannerLiveData");
-									stopScan();
+
 									final Intent meshProvisionerIntent = new Intent(getApplicationContext(), ReconnectActivity.class);
 									meshProvisionerIntent.putExtra(Utils.EXTRA_DEVICE, device);
 									startActivityForResult(meshProvisionerIntent, ReconnectActivity.REQUEST_DEVICE_READY);
-
+												}
+											});
+										}
+									},5000);
 
 								}
-							}
-						});
-					}
-				},1000);
+
 
 
 
@@ -181,7 +182,8 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 				final boolean isDeviceReady = data.getBooleanExtra(Utils.ACTIVITY_RESULT, false);
 				isdeviceconnected = isDeviceReady;
 				if(isDeviceReady){
-						finish();
+					Log.d("connectAuto", "DeviceReady");
+					finish();
 				}
 			}
 		}
