@@ -27,6 +27,7 @@ import dagger.android.ContributesAndroidInjector;
 import no.nordicsemi.android.nrfmeshprovisioner.NetworkFragment;
 import no.nordicsemi.android.nrfmeshprovisioner.ScannerFragment;
 import no.nordicsemi.android.nrfmeshprovisioner.SettingsFragment;
+import no.nordicsemi.android.nrfmeshprovisioner.UiFragment;
 
 @Module
 abstract class FragmentBuildersModule {
@@ -36,4 +37,6 @@ abstract class FragmentBuildersModule {
 	abstract ScannerFragment contribyteScannerFragment();
 	@ContributesAndroidInjector
 	abstract SettingsFragment contributeSettingsFragment();
+	@ContributesAndroidInjector
+	abstract UiFragment contributeUiFragment();
 }

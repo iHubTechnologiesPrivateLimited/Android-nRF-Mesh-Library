@@ -66,7 +66,7 @@ public class BindAppKeysActivity extends AppCompatActivity implements BindAppKey
         final HashMap<Integer, String> tempAppKeys = (HashMap<Integer, String>) getIntent().getSerializableExtra(APP_KEYS);
         populateAppKeysMap(tempAppKeys);
 
-        //Bind ui
+        //Bind Ui
         ButterKnife.bind(this);
 
         final Toolbar toolbar = findViewById(R.id.toolbar);

@@ -32,6 +32,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -84,6 +85,7 @@ public class NetworkFragment extends Fragment implements Injectable,
         } else {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         }
+        Log.d("UI", "getActivity(): "+getActivity().getLocalClassName());
         mAdapter = new NodeAdapter(getActivity(), mViewModel.getMeshRepository().getProvisionedNodesLiveData());
         mAdapter.setOnItemClickListener(this);
         recyclerView.setAdapter(mAdapter);

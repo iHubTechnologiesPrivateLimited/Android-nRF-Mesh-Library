@@ -34,11 +34,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -47,16 +44,14 @@ import butterknife.ButterKnife;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.support.HasSupportFragmentInjector;
-import no.nordicsemi.android.meshprovisioner.configuration.ProvisionedMeshNode;
 import no.nordicsemi.android.nrfmeshprovisioner.di.Injectable;
-import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentResetNetwork;
 import no.nordicsemi.android.nrfmeshprovisioner.utils.Utils;
 import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.SharedViewModel;
 
 public class MainActivity extends AppCompatActivity implements Injectable, HasSupportFragmentInjector,  BottomNavigationView.OnNavigationItemSelectedListener,
         BottomNavigationView.OnNavigationItemReselectedListener,
         ScannerFragment.ScannerFragmentListener, FragmentManager.OnBackStackChangedListener,
-        NetworkFragment.NetworkFragmentListener {
+        NetworkFragment.NetworkFragmentListener,UiFragment.UiFragmentListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String CURRENT_FRAGMENT = "CURRENT_FRAGMENT";
@@ -76,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements Injectable, HasSu
     private NetworkFragment mNetworkFragment;
     private ScannerFragment mScannerFragment;
     private Fragment mSettingsFragment;
-    private uiFragment mUiFragment;
+    private UiFragment mUiFragment;
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements Injectable, HasSu
 
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(SharedViewModel.class);
 
-        mUiFragment = (uiFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_ui);
+        mUiFragment = (UiFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_ui);
         mNetworkFragment = (NetworkFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_network);
         mScannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_scanner);
         mSettingsFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_settings);
@@ -111,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements Injectable, HasSu
         });
 
         if(savedInstanceState == null) {
-            onNavigationItemSelected(mBottomNavigationView.getMenu().findItem(R.id.action_network));
+            onNavigationItemSelected(mBottomNavigationView.getMenu().findItem(R.id.action_ui));
         } else {
             mBottomNavigationView.setSelectedItemId(savedInstanceState.getInt(CURRENT_FRAGMENT));
         }

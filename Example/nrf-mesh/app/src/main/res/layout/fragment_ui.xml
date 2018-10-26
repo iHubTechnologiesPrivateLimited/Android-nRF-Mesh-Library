@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".uiFragment"
+    tools:context=".UiFragment"
     tools:showIn="@layout/activity_ui">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/global_ui_tool_bar"
         android:layout_width="0dp"
@@ -15,5 +16,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:logo="@drawable/ic_earth"
         app:title="@string/global_ui"
-        app:titleMarginStart="32dp"/>
+        app:titleMarginStart="32dp" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_provisioned_nodes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingTop="8dp"/>
+    <include
+        android:id="@+id/no_networks_configured"
+        layout="@layout/info_no_networks_configured"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 </android.support.constraint.ConstraintLayout>
