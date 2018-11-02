@@ -18,11 +18,11 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import no.nordicsemi.android.meshprovisioner.configuration.ProvisionedMeshNode;
-import no.nordicsemi.android.nrfmeshprovisioner.adapter.NodeAdapter;
+import no.nordicsemi.android.nrfmeshprovisioner.adapter.UiNodeAdapter;
 import no.nordicsemi.android.nrfmeshprovisioner.di.Injectable;
 import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.SharedViewModel;
 
-public class UiFragment extends Fragment implements  Injectable, NodeAdapter.OnItemClickListener {
+public class UiFragment extends Fragment implements  Injectable, UiNodeAdapter.OnItemClickListener {
 
 
    SharedViewModel mViewModel;
@@ -30,7 +30,7 @@ public class UiFragment extends Fragment implements  Injectable, NodeAdapter.OnI
    @Inject
    ViewModelProvider.Factory mViewModelFactory;
 
-    private NodeAdapter mAdapter;
+    private UiNodeAdapter mAdapter;
     public interface UiFragmentListener {
         void onProvisionedMeshNodeSelected();
     }
@@ -41,7 +41,7 @@ public class UiFragment extends Fragment implements  Injectable, NodeAdapter.OnI
         final View rootView = inflater.inflate(R.layout.fragment_ui, null);
         final RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view_provisioned_nodes);
         final View noNetworksConfiguredView = rootView.findViewById(R.id.no_networks_configured);
-      // mViewModel = ViewModelProviders.of(getActivity(), mViewModelFactory).get(SharedViewModel.class);
+       mViewModel = ViewModelProviders.of(getActivity(), mViewModelFactory).get(SharedViewModel.class);
 
         boolean isTablet = getResources().getBoolean(R.bool.isTablet);
         if(isTablet){
@@ -50,9 +50,18 @@ public class UiFragment extends Fragment implements  Injectable, NodeAdapter.OnI
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         }
         Log.d("UI", "UiFragment: "+getActivity());
-        mAdapter = new NodeAdapter(getActivity(), mViewModel.getMeshRepository().getProvisionedNodesLiveData());
-//        mAdapter.setOnItemClickListener(this);
-//        recyclerView.setAdapter(mAdapter);
+        mAdapter = new UiNodeAdapter(getActivity(), mViewModel.getMeshRepository().getProvisionedNodesLiveData());
+        mAdapter.setOnItemClickListener(this);
+        recyclerView.setAdapter(mAdapter);
+        mViewModel.getMeshRepository().getProvisionedNodesLiveData().observe(this, provisionedNodesLiveData -> {
+            if(mAdapter.getItemCount() > 0) {
+                noNetworksConfiguredView.setVisibility(View.GONE);
+            } else {
+                noNetworksConfiguredView.setVisibility(View.VISIBLE);
+            }
+            mAdapter.notifyDataSetChanged();
+        });
+
 
         return  rootView;
     }
