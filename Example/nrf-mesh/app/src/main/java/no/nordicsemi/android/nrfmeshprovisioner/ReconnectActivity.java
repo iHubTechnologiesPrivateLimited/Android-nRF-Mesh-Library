@@ -73,10 +73,12 @@ public class ReconnectActivity extends AppCompatActivity implements Injectable {
 		// Create view model containing utility methods for scanning
 		mReconnectViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ReconnectViewModel.class);
 		//Toast.makeText(this, " Not yet Connected ", Toast.LENGTH_SHORT).show();
+		Log.d("connectAuto", ":: not yet connected");
 		mReconnectViewModel.connect(device);
 		mReconnectViewModel.isConnected().observe(this, isConnected -> {
-			Log.d("connectAuto", ":: "+isConnected);
+
 			if(!isConnected){
+				Log.d("connectAuto", ":: "+isConnected);
 				finish();
 			}else{
 				Log.d("connectAuto", ":: connected");
