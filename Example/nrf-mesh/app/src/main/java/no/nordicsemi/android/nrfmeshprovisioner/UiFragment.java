@@ -2,6 +2,7 @@ package no.nordicsemi.android.nrfmeshprovisioner;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -20,6 +22,7 @@ import javax.inject.Inject;
 import no.nordicsemi.android.meshprovisioner.configuration.ProvisionedMeshNode;
 import no.nordicsemi.android.nrfmeshprovisioner.adapter.UiNodeAdapter;
 import no.nordicsemi.android.nrfmeshprovisioner.di.Injectable;
+import no.nordicsemi.android.nrfmeshprovisioner.utils.Utils;
 import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.SharedViewModel;
 
 public class UiFragment extends Fragment implements  Injectable, UiNodeAdapter.OnItemClickListener {
@@ -68,7 +71,14 @@ public class UiFragment extends Fragment implements  Injectable, UiNodeAdapter.O
 
     @Override
     public void onConfigureClicked(ProvisionedMeshNode node) {
-
+        if(mViewModel.isConenctedToMesh()) {
+            ((NetworkFragment.NetworkFragmentListener) getActivity()).onProvisionedMeshNodeSelected();
+            final Intent meshConfigurationIntent = new Intent(getActivity(), NodeConfigurationActivity.class);
+            meshConfigurationIntent.putExtra(Utils.EXTRA_DEVICE, node);
+            getActivity().startActivity(meshConfigurationIntent);
+        } else {
+            Toast.makeText(getActivity(), R.string.disconnected_network_rationale, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
