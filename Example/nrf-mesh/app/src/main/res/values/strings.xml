@@ -296,6 +296,7 @@
     <string name="title_about">About</string>
     <string name="summary_verion">App Version</string>
     <string name="title_node_configuration">Node Configuration</string>
+    <string name="title_switch_board">Switch Board</string>
     <string name="title_added_app_keys">Added App Keys</string>
     <string name="action_view_added_keys">VIEW</string>
 

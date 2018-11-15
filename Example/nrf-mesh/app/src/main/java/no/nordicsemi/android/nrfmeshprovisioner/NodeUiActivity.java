@@ -133,7 +133,7 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable,
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.title_node_configuration);
+        getSupportActionBar().setTitle(R.string.title_switch_board);
         getSupportActionBar().setSubtitle(node.getNodeName());
 
         actionGetCompositionData = findViewById(R.id.action_get_compostion_data);
