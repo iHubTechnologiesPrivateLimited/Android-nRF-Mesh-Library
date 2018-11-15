@@ -32,6 +32,7 @@ import no.nordicsemi.android.nrfmeshprovisioner.MeshProvisionerActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.NodeConfigurationActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.BaseModelConfigurationActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.NodeDetailsActivity;
+import no.nordicsemi.android.nrfmeshprovisioner.NodeUiActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.ProvisionedNodesScannerActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.ReconnectActivity;
 
@@ -49,6 +50,9 @@ abstract class ActivitiesModule {
 
 	@ContributesAndroidInjector()
 	abstract NodeConfigurationActivity contributeElementConfigurationActivity();
+
+	@ContributesAndroidInjector()
+	abstract NodeUiActivity contributeUiConfigurationActivity();
 
 	@ContributesAndroidInjector()
 	abstract BaseModelConfigurationActivity contributeBaseModelConfigurationActivity();

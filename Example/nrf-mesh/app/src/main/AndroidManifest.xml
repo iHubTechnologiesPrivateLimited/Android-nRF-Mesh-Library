@@ -77,6 +77,9 @@
             android:name=".NodeConfigurationActivity"
             android:launchMode="singleTop" />
         <activity
+            android:name=".NodeUiActivity"
+            android:launchMode="singleTop" />
+        <activity
             android:name=".PublicationSettingsActivity"
             android:launchMode="singleTop" />
         <activity

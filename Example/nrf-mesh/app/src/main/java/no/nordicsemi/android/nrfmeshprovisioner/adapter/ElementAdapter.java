@@ -44,6 +44,7 @@ import no.nordicsemi.android.meshprovisioner.utils.CompositionDataParser;
 import no.nordicsemi.android.meshprovisioner.utils.Element;
 import no.nordicsemi.android.meshprovisioner.utils.MeshParserUtils;
 import no.nordicsemi.android.nrfmeshprovisioner.NodeConfigurationActivity;
+import no.nordicsemi.android.nrfmeshprovisioner.NodeUiActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.R;
 import no.nordicsemi.android.nrfmeshprovisioner.livedata.ExtendedMeshNode;
 
@@ -67,7 +68,17 @@ public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ViewHold
         });
     }
 
-
+    public ElementAdapter(final NodeUiActivity NodeUiActivity, final ExtendedMeshNode extendedMeshnode) {
+        this.mContext = NodeUiActivity.getApplicationContext();
+        extendedMeshnode.observe(NodeUiActivity, extendedMeshNode -> {
+            if(extendedMeshNode.getMeshNode() != null) {
+                mProvisionedMeshNode = (ProvisionedMeshNode) extendedMeshnode.getMeshNode();
+                mElements.clear();
+                mElements.addAll(mProvisionedMeshNode.getElements().values());
+                notifyDataSetChanged();
+            }
+        });
+    }
     public void setOnItemClickListener(final ElementAdapter.OnItemClickListener listener) {
         mOnItemClickListener = listener;
     }

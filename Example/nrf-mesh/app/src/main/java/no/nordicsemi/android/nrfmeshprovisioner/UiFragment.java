@@ -73,7 +73,7 @@ public class UiFragment extends Fragment implements  Injectable, UiNodeAdapter.O
     public void onConfigureClicked(ProvisionedMeshNode node) {
         if(mViewModel.isConenctedToMesh()) {
             ((NetworkFragment.NetworkFragmentListener) getActivity()).onProvisionedMeshNodeSelected();
-            final Intent meshConfigurationIntent = new Intent(getActivity(), NodeConfigurationActivity.class);
+            final Intent meshConfigurationIntent = new Intent(getActivity(), NodeUiActivity.class);
             meshConfigurationIntent.putExtra(Utils.EXTRA_DEVICE, node);
             getActivity().startActivity(meshConfigurationIntent);
         } else {
