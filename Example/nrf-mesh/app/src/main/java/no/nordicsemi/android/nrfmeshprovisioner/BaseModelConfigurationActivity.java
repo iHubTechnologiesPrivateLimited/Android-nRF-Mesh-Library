@@ -114,11 +114,23 @@ public abstract class BaseModelConfigurationActivity extends AppCompatActivity i
     ProgressBar mProgressbar;
 
     protected Handler mHandler;
+
+
+
     protected ModelConfigurationViewModel mViewModel;
     protected List<byte[]> mGroupAddress = new ArrayList<>();
     protected List<Integer> mKeyIndexes = new ArrayList<>();
     protected AddressAdapter mAddressAdapter;
     protected BoundAppKeysAdapter mBoundAppKeyAdapter;
+
+    public void setmActionRead(Button mActionRead) {
+        this.mActionRead = mActionRead;
+    }
+
+    public Button getmActionRead() {
+        return mActionRead;
+    }
+
     protected Button mActionRead;
 
     /**
@@ -127,7 +139,9 @@ public abstract class BaseModelConfigurationActivity extends AppCompatActivity i
      * @param model mesh model to be controlled
      */
     protected abstract void addControlsUi(final MeshModel model);
-
+    public ModelConfigurationViewModel getmViewModel() {
+        return mViewModel;
+    }
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

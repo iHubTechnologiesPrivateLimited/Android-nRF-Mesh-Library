@@ -95,6 +95,9 @@
             android:name=".GenericLevelServerActivity"
             android:launchMode="singleTop" />
         <activity
+            android:name=".UiOnOffServerActivity"
+            android:launchMode="singleTop" />
+        <activity
             android:name=".GenericOnOffServerActivity"
             android:launchMode="singleTop" />
         <activity
