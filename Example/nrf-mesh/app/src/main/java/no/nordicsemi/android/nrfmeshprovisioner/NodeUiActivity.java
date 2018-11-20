@@ -302,7 +302,7 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable,
      * @param element element
      * @param model model
      */
-    private void startActivity(final ProvisionedMeshNode meshNode, final Element element, final MeshModel model) {
+    public void startActivity(final ProvisionedMeshNode meshNode, final Element element, final MeshModel model) {
         final Intent intent;
         if(model instanceof GenericOnOffServerModel) {
             intent = new Intent(this, GenericOnOffServerActivity.class);

@@ -33,6 +33,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.w3c.dom.Node;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +57,7 @@ import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_DATA_MO
 import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_DEVICE;
 import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_ELEMENT_ADDRESS;
 import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_MODEL_ID;
-
+import no.nordicsemi.android.nrfmeshprovisioner.NodeUiActivity;
 public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.ViewHolder> {
 
     private final Context mContext;
@@ -101,27 +103,27 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
     private void inflateModelViews(final ViewHolder holder, final List<MeshModel> models){
         //Remove all child views to avoid duplicating
         holder.mModelContainer.removeAllViews();
-        for(MeshModel model : models) {
-            final View modelView = LayoutInflater.from(mContext).inflate(R.layout.model_item, holder.mElementContainer, false);
-            modelView.setTag(model.getModelId());
-            final TextView modelNameView = modelView.findViewById(R.id.model_name);
-            final TextView modelIdView = modelView.findViewById(R.id.model_id);
-            modelNameView.setText(model.getModelName());
-            if(model instanceof VendorModel){
-                modelIdView.setText(mContext.getString(R.string.format_vendor_model_id, CompositionDataParser.formatModelIdentifier(model.getModelId(), true)));
-            } else {
-                modelIdView.setText(mContext.getString(R.string.format_sig_model_id, CompositionDataParser.formatModelIdentifier((short) model.getModelId(), true)));
-            }
-
-            modelView.setOnClickListener(v -> {
-                final int position = holder.getAdapterPosition();
-                final Element element = mElements.get(position);
-                elementSeleted = element;
-                final MeshModel model1 = element.getMeshModels().get(v.getTag());
-                mOnItemClickListener.onElementItemClick(mProvisionedMeshNode, element, model1);
-            });
-            holder.mModelContainer.addView(modelView);
-        }
+//        for(MeshModel model : models) {
+         final View modelView = LayoutInflater.from(mContext).inflate(R.layout.model_item, holder.mElementContainer, false);
+//            modelView.setTag(model.getModelId());
+//            final TextView modelNameView = modelView.findViewById(R.id.model_name);
+//            final TextView modelIdView = modelView.findViewById(R.id.model_id);
+//            modelNameView.setText(model.getModelName());
+//            if(model instanceof VendorModel){
+//                modelIdView.setText(mContext.getString(R.string.format_vendor_model_id, CompositionDataParser.formatModelIdentifier(model.getModelId(), true)));
+//            } else {
+//                modelIdView.setText(mContext.getString(R.string.format_sig_model_id, CompositionDataParser.formatModelIdentifier((short) model.getModelId(), true)));
+//            }
+//
+//            modelView.setOnClickListener(v -> {
+//                final int position = holder.getAdapterPosition();
+//                final Element element = mElements.get(position);
+//                elementSeleted = element;
+//                final MeshModel model1 = element.getMeshModels().get(v.getTag());
+//                mOnItemClickListener.onElementItemClick(mProvisionedMeshNode, element, model1);
+//            });
+//            holder.mModelContainer.addView(modelView);
+//        }
     }
 
     @Override
@@ -170,8 +172,11 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
 
         @Override
         public void onClick(final View v) {
-//            switch (v.getId()){
-//                case R.id.element_item_container:
+            switch (v.getId()){
+                case R.id.element_item_container:
+                    NodeUiActivity nua = new NodeUiActivity();
+                    nua.startActivity(mProvisionedMeshNode, elementSeleted, elementSeleted.getMeshModels().get(v.getTag()));
+                   // mOnItemClickListener.onElementItemClick(mProvisionedMeshNode, elementSeleted.getElementAddress(), elementSeleted.getMeshModels().get(v.getTag()).getModelName());
 //                    if(mModelContainer.getVisibility() == View.VISIBLE){
 //                        mElementExpand.setImageResource(R.drawable.ic_round_expand_more_black_alpha_24dp);
 //                        mModelContainer.setVisibility(View.GONE);
@@ -179,17 +184,17 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
 //                        mElementExpand.setImageResource(R.drawable.ic_round_expand_less_black_alpha_24dp);
 //                        mModelContainer.setVisibility(View.VISIBLE);
 //                    }
-//                    break;
-//                default:
-//                    break;
-//            }
-            final Intent intent;
-            intent = new Intent(this, GenericOnOffServerActivity.class);
-            intent.putExtra(EXTRA_DEVICE, mProvisionedMeshNode);
-            intent.putExtra(EXTRA_ELEMENT_ADDRESS, AddressUtils.getUnicastAddressInt(elementSeleted.getElementAddress()));
-            intent.putExtra(EXTRA_MODEL_ID, elementSeleted.getMeshModels().get(v.getTag()).getModelId());
-            intent.putExtra(EXTRA_DATA_MODEL_NAME, elementSeleted.getMeshModels().get(v.getTag()).getModelName());
-             startActivity(intent);
+                    break;
+                default:
+                    break;
+            }
+//            Intent intent;
+//            intent = new Intent(this, GenericOnOffServerActivity.class);
+//            intent.putExtra(EXTRA_DEVICE, mProvisionedMeshNode);
+//            intent.putExtra(EXTRA_ELEMENT_ADDRESS, AddressUtils.getUnicastAddressInt(elementSeleted.getElementAddress()));
+//            intent.putExtra(EXTRA_MODEL_ID, elementSeleted.getMeshModels().get(v.getTag()).getModelId());
+//            intent.putExtra(EXTRA_DATA_MODEL_NAME, elementSeleted.getMeshModels().get(v.getTag()).getModelName());
+//            mContext.startActivity(intent);
 
         }
     }
