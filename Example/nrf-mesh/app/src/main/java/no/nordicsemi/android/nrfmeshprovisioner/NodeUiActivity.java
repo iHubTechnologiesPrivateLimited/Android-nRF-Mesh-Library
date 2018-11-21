@@ -64,6 +64,7 @@ import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentAppKeyAddSt
 import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentResetNode;
 import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentTransactionStatus;
 import no.nordicsemi.android.nrfmeshprovisioner.utils.Utils;
+import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.ModelConfigurationViewModel;
 import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.NodeConfigurationViewModel;
 import no.nordicsemi.android.nrfmeshprovisioner.widgets.ItemTouchHelperAdapter;
 import no.nordicsemi.android.nrfmeshprovisioner.widgets.RemovableViewHolder;
@@ -105,13 +106,14 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable,
     private NodeConfigurationViewModel mViewModel;
     private AddedAppKeyAdapter mAdapter;
     private Handler mHandler;
-
+    protected ModelConfigurationViewModel mModelViewModel;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mesh_node_ui);
         ButterKnife.bind(this);
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(NodeConfigurationViewModel.class);
+        mModelViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ModelConfigurationViewModel.class);
 
         final Intent intent = getIntent();
         final ProvisionedMeshNode node = intent.getParcelableExtra(Utils.EXTRA_DEVICE);
@@ -144,7 +146,7 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable,
         final TextView noAppKeysFound = findViewById(R.id.no_app_keys);
         final View compositionActionContainer = findViewById(R.id.composition_action_container);
         mRecyclerViewElements.setLayoutManager(new LinearLayoutManager(this));
-        final ElementUiAdapter adapter = new ElementUiAdapter(this, mViewModel.getExtendedMeshNode());
+        final ElementUiAdapter adapter = new ElementUiAdapter(this, mViewModel.getExtendedMeshNode(),mModelViewModel);
         adapter.setHasStableIds(true);
         adapter.setOnItemClickListener(this);
         mRecyclerViewElements.setAdapter(adapter);

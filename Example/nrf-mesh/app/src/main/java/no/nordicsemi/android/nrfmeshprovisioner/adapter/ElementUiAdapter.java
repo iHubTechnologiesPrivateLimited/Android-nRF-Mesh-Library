@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import no.nordicsemi.android.meshprovisioner.configuration.MeshModel;
 import no.nordicsemi.android.meshprovisioner.configuration.ProvisionedMeshNode;
+import no.nordicsemi.android.meshprovisioner.models.GenericOnOffServerModel;
 import no.nordicsemi.android.meshprovisioner.models.VendorModel;
 import no.nordicsemi.android.meshprovisioner.utils.AddressUtils;
 import no.nordicsemi.android.meshprovisioner.utils.CompositionDataParser;
@@ -63,6 +65,8 @@ import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_DEVICE;
 import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_ELEMENT_ADDRESS;
 import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_MODEL_ID;
 import no.nordicsemi.android.nrfmeshprovisioner.NodeUiActivity;
+import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.ModelConfigurationViewModel;
+
 public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.ViewHolder> {
 
 
@@ -76,7 +80,7 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
     private Button mActionOnOff;
     private UiOnOffCallback uiOnOffCallback;
 
-
+    protected ModelConfigurationViewModel mViewModel;
     public ElementUiAdapter(Context mContext) {
         this.mContext = mContext;
         try {
@@ -85,8 +89,9 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
             throw new ClassCastException("Activity must implement AdapterCallback.");
         }
     }
-    public ElementUiAdapter(final NodeUiActivity NodeUiActivity, final ExtendedMeshNode extendedMeshnode) {
+    public ElementUiAdapter(final NodeUiActivity NodeUiActivity, final ExtendedMeshNode extendedMeshnode,final ModelConfigurationViewModel mViewModel ) {
         this.mContext = NodeUiActivity.getApplicationContext();
+        this.mViewModel = mViewModel;
         extendedMeshnode.observe(NodeUiActivity, extendedMeshNode -> {
             if(extendedMeshNode.getMeshNode() != null) {
                 mProvisionedMeshNode = (ProvisionedMeshNode) extendedMeshnode.getMeshNode();
@@ -123,32 +128,44 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
         //Remove all child views to avoid duplicating
         holder.mModelContainer.removeAllViews();
 //        for(MeshModel model : models) {
-        UiOnOffServerActivity uiof = new UiOnOffServerActivity();
-         final View nodeControlsContainer = LayoutInflater.from(mContext).inflate(R.layout.layout_ui_on_off, holder.mElementContainer, false);
-        final TextView onOffState = nodeControlsContainer.findViewById(R.id.on_off_state);
-        mActionOnOff = nodeControlsContainer.findViewById(R.id.action_on_off);
-        mActionOnOff.setOnClickListener((View v) -> {
+//            if(model instanceof GenericOnOffServerModel){
+//            Log.d("inflate", "in if model: "+model.getModelName());
+//            //uiOnOffCallback.addControlsUi(model);
+//        }
+//            Log.d("inflate", "model: "+model.getModelName());
+//        }
+        for(MeshModel model : models) {
+            if(model instanceof GenericOnOffServerModel){
+          //  UiOnOffServerActivity uiof = new UiOnOffServerActivity();
+            Log.d("inflate", "model: " + model.getModelName());
+            final View nodeControlsContainer = LayoutInflater.from(mContext).inflate(R.layout.layout_ui_on_off, holder.mElementContainer, false);
+            final TextView onOffState = nodeControlsContainer.findViewById(R.id.on_off_state);
+            mActionOnOff = nodeControlsContainer.findViewById(R.id.action_on_off);
+            mActionOnOff.setOnClickListener((View v) -> {
 
-            try {
-                final ProvisionedMeshNode node = mProvisionedMeshNode;
-                if (mActionOnOff.getText().toString().equals("ON")) {
-                    uiOnOffCallback.getmViewModel().sendGenericOnOff(node, 0, 0, 0, true);
-                } else {
-                    uiof.getmViewModel().sendGenericOnOff(node, 0, 0, 0, false);
+                try {
+                    final ProvisionedMeshNode node = mProvisionedMeshNode;
+                    if (mActionOnOff.getText().toString().equals("ON")) {
+                        mViewModel.sendGenericOnOff(node, 0, 0, 0, true);
+                    } else {
+                        mViewModel.sendGenericOnOff(node, 0, 0, 0, false);
+                    }
+                    //uiof.progressBar();
+                } catch (IllegalArgumentException ex) {
+                    Toast.makeText(mContext, ex.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                uiof.progressBar();
-            } catch (IllegalArgumentException ex) {
-                Toast.makeText(mContext, ex.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+            });
 
-        uiof.setmActionRead(nodeControlsContainer.findViewById(R.id.action_read));
-        uiof.getmActionRead().setOnClickListener(v -> {
-            final ProvisionedMeshNode node = (ProvisionedMeshNode) uiof.getmViewModel().getExtendedMeshNode().getMeshNode();
-            uiof.getmViewModel().sendGenericOnOffGet(node);
-            uiof.progressBar();
-        });
+                mActionOnOff = nodeControlsContainer.findViewById(R.id.action_read);
+            mActionOnOff.setOnClickListener(v -> {
+                final ProvisionedMeshNode node = (ProvisionedMeshNode) mViewModel.getExtendedMeshNode().getMeshNode();
+                mViewModel.sendGenericOnOffGet(node);
+               // uiof.progressBar();
+            });
 
+            holder.mModelContainer.addView(nodeControlsContainer);
+        }
+        }
         // final CardView cardView = findViewById(R.id.node_controls_card);
        // final View nodeControlsContainer = LayoutInflater.from(this).inflate(R.layout.layout_generic_on_off, cardView);
 
@@ -173,7 +190,7 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
 //            });
 //
 //        }
-        holder.mModelContainer.addView(nodeControlsContainer);
+
     }
 
     @Override
