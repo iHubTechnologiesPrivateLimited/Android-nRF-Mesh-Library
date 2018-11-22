@@ -142,7 +142,7 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 												}
 											});
 										}
-									},5000);
+									},100);
 
 								}
 

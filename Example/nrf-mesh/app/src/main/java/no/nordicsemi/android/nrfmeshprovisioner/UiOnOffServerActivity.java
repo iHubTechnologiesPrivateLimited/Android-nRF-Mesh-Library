@@ -18,7 +18,7 @@ import no.nordicsemi.android.meshprovisioner.models.GenericOnOffServerModel;
 import no.nordicsemi.android.meshprovisioner.utils.MeshParserUtils;
 import no.nordicsemi.android.nrfmeshprovisioner.adapter.ElementUiAdapter;
 
-public class UiOnOffServerActivity extends BaseModelConfigurationActivity implements ElementUiAdapter.UiOnOffCallback {
+public class UiOnOffServerActivity extends BaseModelConfigurationActivity {
 
     @Inject
     ViewModelProvider.Factory mViewModelFactory;
@@ -184,7 +184,6 @@ public class UiOnOffServerActivity extends BaseModelConfigurationActivity implem
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        this.elementUiAdapter = new ElementUiAdapter(this);
     }
 
     @Override

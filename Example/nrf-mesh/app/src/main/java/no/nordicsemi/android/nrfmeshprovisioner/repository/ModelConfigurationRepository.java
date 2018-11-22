@@ -323,7 +323,7 @@ public class ModelConfigurationRepository extends BaseMeshRepository {
     public void sendGenericOnOffSet(final ProvisionedMeshNode node, final Integer transitionSteps, final Integer transitionResolution, final Integer delay, final boolean state) {
         final Element element = mElement.getValue();
         final MeshModel model = mMeshModel.getValue();
-
+        Log.d(TAG, "inflate: "+model.getModelName()+" app keys "+ model.getBoundAppKeyIndexes().get(0));
         if (!model.getBoundAppKeyIndexes().isEmpty()) {
             final int appKeyIndex = model.getBoundAppKeyIndexes().get(0);
             if (!model.getSubscriptionAddresses().isEmpty()) {

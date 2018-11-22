@@ -78,19 +78,13 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
     private ProvisionedMeshNode mProvisionedMeshNode;
     private Element elementSeleted;
     private Button mActionOnOff;
-    private UiOnOffCallback uiOnOffCallback;
+    private NodeUiActivity nodeUiActivity;
 
     protected ModelConfigurationViewModel mViewModel;
-    public ElementUiAdapter(Context mContext) {
-        this.mContext = mContext;
-        try {
-            this.uiOnOffCallback = ((UiOnOffCallback) mContext);
-        }catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement AdapterCallback.");
-        }
-    }
+
     public ElementUiAdapter(final NodeUiActivity NodeUiActivity, final ExtendedMeshNode extendedMeshnode,final ModelConfigurationViewModel mViewModel ) {
         this.mContext = NodeUiActivity.getApplicationContext();
+        nodeUiActivity = NodeUiActivity;
         this.mViewModel = mViewModel;
         extendedMeshnode.observe(NodeUiActivity, extendedMeshNode -> {
             if(extendedMeshNode.getMeshNode() != null) {
@@ -127,18 +121,15 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
     private void inflateModelViews(final ViewHolder holder, final List<MeshModel> models){
         //Remove all child views to avoid duplicating
         holder.mModelContainer.removeAllViews();
-//        for(MeshModel model : models) {
-//            if(model instanceof GenericOnOffServerModel){
-//            Log.d("inflate", "in if model: "+model.getModelName());
-//            //uiOnOffCallback.addControlsUi(model);
-//        }
-//            Log.d("inflate", "model: "+model.getModelName());
-//        }
-        for(MeshModel model : models) {
+
+        for(int x = 0; x<models.size();x++) {
+            MeshModel model = models.get(x);
             if(model instanceof GenericOnOffServerModel){
+                Log.d("inflate", "getElementAddress: " + AddressUtils.getUnicastAddressInt(mElements.get(x).getElementAddress())+" name "+mElements.get(x).getElementAddress());
+
+                mViewModel.setModel(mProvisionedMeshNode, AddressUtils.getUnicastAddressInt(mElements.get(x).getElementAddress()),model.getModelId());
           //  UiOnOffServerActivity uiof = new UiOnOffServerActivity();
-            Log.d("inflate", "model: " + model.getModelName());
-            final View nodeControlsContainer = LayoutInflater.from(mContext).inflate(R.layout.layout_ui_on_off, holder.mElementContainer, false);
+              final View nodeControlsContainer = LayoutInflater.from(mContext).inflate(R.layout.layout_ui_on_off, holder.mElementContainer, false);
             final TextView onOffState = nodeControlsContainer.findViewById(R.id.on_off_state);
             mActionOnOff = nodeControlsContainer.findViewById(R.id.action_on_off);
             mActionOnOff.setOnClickListener((View v) -> {
@@ -162,6 +153,34 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
                 mViewModel.sendGenericOnOffGet(node);
                // uiof.progressBar();
             });
+
+                mViewModel.getGenericOnOffState().observe(nodeUiActivity, genericOnOffStatusUpdate -> {
+                    //hideProgressBar();
+                    final boolean presentState = genericOnOffStatusUpdate.isPresentOnOff();
+                    final Boolean targetOnOff = genericOnOffStatusUpdate.getTargetOnOff();
+                    final int steps = genericOnOffStatusUpdate.getSteps();
+                    final int resolution = genericOnOffStatusUpdate.getResolution();
+                    if (targetOnOff == null) {
+                        if (presentState) {
+                            onOffState.setText(R.string.generic_state_on);
+                            mActionOnOff.setText(R.string.action_generic_off);
+                        } else {
+                            onOffState.setText(R.string.generic_state_off);
+                            mActionOnOff.setText(R.string.action_generic_on);
+                        }
+                       // remainingTime.setVisibility(View.GONE);
+                    } else {
+                        if (!targetOnOff) {
+                            onOffState.setText(R.string.generic_state_on);
+                            mActionOnOff.setText(R.string.action_generic_off);
+                        } else {
+                            onOffState.setText(R.string.generic_state_off);
+                            mActionOnOff.setText(R.string.action_generic_on);
+                        }
+                       // remainingTime.setText(getString(R.string.remaining_time, MeshParserUtils.getRemainingTransitionTime(resolution, steps)));
+                       // remainingTime.setVisibility(View.VISIBLE);
+                    }
+                });
 
             holder.mModelContainer.addView(nodeControlsContainer);
         }
@@ -214,10 +233,6 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
     @FunctionalInterface
     public interface OnItemClickListener {
         void onElementItemClick(final ProvisionedMeshNode meshNode, final Element element, final MeshModel model);
-    }
-
-    public static interface UiOnOffCallback {
-        void addControlsUi(final MeshModel model);
     }
 
     final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
