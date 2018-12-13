@@ -23,14 +23,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        tribhuvan {
-            keyAlias 'ihub'
-            keyPassword '3bu1@ihub'
-            storeFile file('/home/tribhuvan/tribhuvan/homeautomation/BLEautomation/signing/ihubha.jks')
-            storePassword '3bu1@ihub'
-        }
-    }
+
     compileSdkVersion 28
     buildToolsVersion "28.0.2"
     defaultConfig {
@@ -49,7 +42,6 @@ android {
             shrinkResources false
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.tribhuvan
         }
     }
     compileOptions {

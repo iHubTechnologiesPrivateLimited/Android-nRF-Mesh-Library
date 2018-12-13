@@ -73,14 +73,11 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
 
     private final Context mContext;
     private final List<Element> mElements = new ArrayList<>();
-    private final String TAG = ElementAdapter.class.getSimpleName();
+    private final String TAG = ElementUiAdapter.class.getSimpleName();
     private OnItemClickListener mOnItemClickListener;
     private ProvisionedMeshNode mProvisionedMeshNode;
-    private Element elementSeleted;
-    private Button mActionOnOff;
     private NodeUiActivity nodeUiActivity;
-
-    protected ModelConfigurationViewModel mViewModel;
+    public ModelConfigurationViewModel mViewModel;
 
     public ElementUiAdapter(final NodeUiActivity NodeUiActivity, final ExtendedMeshNode extendedMeshnode,final ModelConfigurationViewModel mViewModel ) {
         this.mContext = NodeUiActivity.getApplicationContext();
@@ -101,7 +98,7 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
 
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup parent, final int viewType) {
-        final View layoutView = LayoutInflater.from(mContext).inflate(R.layout.element_item, parent, false);
+        final View layoutView = LayoutInflater.from(mContext).inflate(R.layout.layout_ui_on_off, parent, false);
         return new ViewHolder(layoutView);
     }
 
@@ -115,12 +112,11 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
 
         final List<MeshModel> models = new ArrayList<>(element.getMeshModels().values());
         inflateModelViews(holder, models);
+
     }
 
 
     private void inflateModelViews(final ViewHolder holder, final List<MeshModel> models){
-        //Remove all child views to avoid duplicating
-        holder.mModelContainer.removeAllViews();
 
         for(int x = 0; x<models.size();x++) {
             MeshModel model = models.get(x);
@@ -128,87 +124,19 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
                 Log.d("inflate", "getElementAddress: " + AddressUtils.getUnicastAddressInt(mElements.get(x).getElementAddress())+" name "+mElements.get(x).getElementAddress());
 
                 mViewModel.setModel(mProvisionedMeshNode, AddressUtils.getUnicastAddressInt(mElements.get(x).getElementAddress()),model.getModelId());
-          //  UiOnOffServerActivity uiof = new UiOnOffServerActivity();
-              final View nodeControlsContainer = LayoutInflater.from(mContext).inflate(R.layout.layout_ui_on_off, holder.mElementContainer, false);
-            final TextView onOffState = nodeControlsContainer.findViewById(R.id.on_off_state);
-            mActionOnOff = nodeControlsContainer.findViewById(R.id.action_on_off);
-            mActionOnOff.setOnClickListener((View v) -> {
-
-                try {
-                    final ProvisionedMeshNode node = mProvisionedMeshNode;
-                    if (mActionOnOff.getText().toString().equals("ON")) {
-                        mViewModel.sendGenericOnOff(node, 0, 0, 0, true);
-                    } else {
-                        mViewModel.sendGenericOnOff(node, 0, 0, 0, false);
-                    }
-                    //uiof.progressBar();
-                } catch (IllegalArgumentException ex) {
-                    Toast.makeText(mContext, ex.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
-
-                mActionOnOff = nodeControlsContainer.findViewById(R.id.action_read);
-            mActionOnOff.setOnClickListener(v -> {
-                final ProvisionedMeshNode node = (ProvisionedMeshNode) mViewModel.getExtendedMeshNode().getMeshNode();
-                mViewModel.sendGenericOnOffGet(node);
-               // uiof.progressBar();
-            });
 
                 mViewModel.getGenericOnOffState().observe(nodeUiActivity, genericOnOffStatusUpdate -> {
-                    //hideProgressBar();
-                    final boolean presentState = genericOnOffStatusUpdate.isPresentOnOff();
-                    final Boolean targetOnOff = genericOnOffStatusUpdate.getTargetOnOff();
-                    final int steps = genericOnOffStatusUpdate.getSteps();
-                    final int resolution = genericOnOffStatusUpdate.getResolution();
-                    if (targetOnOff == null) {
-                        if (presentState) {
-                            onOffState.setText(R.string.generic_state_on);
-                            mActionOnOff.setText(R.string.action_generic_off);
-                        } else {
-                            onOffState.setText(R.string.generic_state_off);
-                            mActionOnOff.setText(R.string.action_generic_on);
-                        }
-                       // remainingTime.setVisibility(View.GONE);
-                    } else {
-                        if (!targetOnOff) {
-                            onOffState.setText(R.string.generic_state_on);
-                            mActionOnOff.setText(R.string.action_generic_off);
-                        } else {
-                            onOffState.setText(R.string.generic_state_off);
-                            mActionOnOff.setText(R.string.action_generic_on);
-                        }
-                       // remainingTime.setText(getString(R.string.remaining_time, MeshParserUtils.getRemainingTransitionTime(resolution, steps)));
-                       // remainingTime.setVisibility(View.VISIBLE);
-                    }
-                });
+            //hideProgressBar();
+            final boolean presentState = genericOnOffStatusUpdate.isPresentOnOff();
+            final Boolean targetOnOff = genericOnOffStatusUpdate.getTargetOnOff();
+            holder.setPresentState(presentState);
+            holder.setTargetOnOff(targetOnOff);
 
-            holder.mModelContainer.addView(nodeControlsContainer);
+        });
+
         }
         }
-        // final CardView cardView = findViewById(R.id.node_controls_card);
-       // final View nodeControlsContainer = LayoutInflater.from(this).inflate(R.layout.layout_generic_on_off, cardView);
 
-
-
-        //            modelView.setTag(model.getModelId());
-//            final TextView modelNameView = modelView.findViewById(R.id.model_name);
-//            final TextView modelIdView = modelView.findViewById(R.id.model_id);
-//            modelNameView.setText(model.getModelName());
-//            if(model instanceof VendorModel){
-//                modelIdView.setText(mContext.getString(R.string.format_vendor_model_id, CompositionDataParser.formatModelIdentifier(model.getModelId(), true)));
-//            } else {
-//                modelIdView.setText(mContext.getString(R.string.format_sig_model_id, CompositionDataParser.formatModelIdentifier((short) model.getModelId(), true)));
-//            }
-//
-//            modelView.setOnClickListener(v -> {
-//                final int position = holder.getAdapterPosition();
-//                final Element element = mElements.get(position);
-//                elementSeleted = element;
-//                final MeshModel model1 = element.getMeshModels().get(v.getTag());
-//                mOnItemClickListener.onElementItemClick(mProvisionedMeshNode, element, model1);
-//            });
-//
-//        }
 
     }
 
@@ -238,50 +166,83 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
     final class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         @BindView(R.id.element_item_container)
         ConstraintLayout mElementContainer;
-        @BindView(R.id.icon)
-        ImageView mIcon;
         @BindView(R.id.element_title)
         TextView mElementTitle;
         @BindView(R.id.element_subtitle)
         TextView mElementSubtitle;
-        @BindView(R.id.element_expand)
-        ImageView mElementExpand;
-        @BindView(R.id.model_container)
-        LinearLayout mModelContainer;
+
+        @BindView(R.id.action_read)
+        Button mActionRead;
+        @BindView(R.id.action_on_off)
+        Button mActionOnOff;
+
+        public void setPresentState(boolean presentState) {
+            this.presentState = presentState;
+        }
+        public void setTargetOnOff(Boolean targetOnOff) {
+            this.targetOnOff = targetOnOff;
+        }
+
+
+        protected boolean presentState;
+
+
+
+        protected Boolean targetOnOff;
 
         private ViewHolder(final View view) {
             super(view);
             ButterKnife.bind(this, view);
             mElementContainer.setOnClickListener(this);
-
+            mActionOnOff.setOnClickListener(this);
+            mActionRead.setOnClickListener(this);
         }
 
         @Override
         public void onClick(final View v) {
             switch (v.getId()){
-                case R.id.element_item_container:
-                   // NodeUiActivity nua = new NodeUiActivity();
-                   // nua.startActivity(mProvisionedMeshNode, elementSeleted, elementSeleted.getMeshModels().get(v.getTag()));
-                    //mOnItemClickListener.onElementItemClick(mProvisionedMeshNode, elementSeleted.getElementAddress(), elementSeleted.getMeshModels().get(v.getTag()).getModelName());
-                    if(mModelContainer.getVisibility() == View.VISIBLE){
-                        mElementExpand.setImageResource(R.drawable.ic_round_expand_more_black_alpha_24dp);
-                        mModelContainer.setVisibility(View.GONE);
-                    } else {
-                        mElementExpand.setImageResource(R.drawable.ic_round_expand_less_black_alpha_24dp);
-                        mModelContainer.setVisibility(View.VISIBLE);
+                case R.id.action_on_off:
+                    try {
+                        final ProvisionedMeshNode node = mProvisionedMeshNode;
+                        Log.d(TAG, "onClick: "+mActionOnOff.getText());
+                        if (mActionOnOff.getText().toString().equals("ON")) {
+                            mViewModel.sendGenericOnOff(node, 0, 0, 0, true);
+                            mActionOnOff.setText(R.string.action_generic_off);
+                        } else {
+                            mViewModel.sendGenericOnOff(node, 0, 0, 0, false);
+                            mActionOnOff.setText(R.string.action_generic_on);
+                        }
+                        //uiof.progressBar();
+                    } catch (IllegalArgumentException ex) {
+                        Toast.makeText(mContext, ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    }finally {
+
                     }
                     break;
+                case R.id.action_read:
+                    final ProvisionedMeshNode node = (ProvisionedMeshNode) mViewModel.getExtendedMeshNode().getMeshNode();
+                    mViewModel.sendGenericOnOffGet(node);
                 default:
                     break;
             }
-//            Intent intent;
-//            intent = new Intent(this, GenericOnOffServerActivity.class);
-//            intent.putExtra(EXTRA_DEVICE, mProvisionedMeshNode);
-//            intent.putExtra(EXTRA_ELEMENT_ADDRESS, AddressUtils.getUnicastAddressInt(elementSeleted.getElementAddress()));
-//            intent.putExtra(EXTRA_MODEL_ID, elementSeleted.getMeshModels().get(v.getTag()).getModelId());
-//            intent.putExtra(EXTRA_DATA_MODEL_NAME, elementSeleted.getMeshModels().get(v.getTag()).getModelName());
-//            mContext.startActivity(intent);
-
+//            if (targetOnOff == null) {
+//                if (presentState) {
+//                    //onOffState.setText(R.string.generic_state_on);
+//                    mActionOnOff.setText(R.string.action_generic_off);
+//                } else {
+//                    // onOffState.setText(R.string.generic_state_off);
+//                    mActionOnOff.setText(R.string.action_generic_on);
+//                }
+//                // remainingTime.setVisibility(View.GONE);
+//            } else {
+//                if (!targetOnOff) {
+//                    // onOffState.setText(R.string.generic_state_on);
+//                    mActionOnOff.setText(R.string.action_generic_off);
+//                } else {
+//                    //onOffState.setText(R.string.generic_state_off);
+//                    mActionOnOff.setText(R.string.action_generic_on);
+//                }
+//            }
         }
     }
 }
