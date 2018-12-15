@@ -78,8 +78,20 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
     private ProvisionedMeshNode mProvisionedMeshNode;
     private NodeUiActivity nodeUiActivity;
     public ModelConfigurationViewModel mViewModel;
+    public List<MeshModel> models;
+    RecyclerView mRecyclerViewElements;
 
-    public ElementUiAdapter(final NodeUiActivity NodeUiActivity, final ExtendedMeshNode extendedMeshnode,final ModelConfigurationViewModel mViewModel ) {
+    public int getCpos() {
+        return cpos;
+    }
+
+    public void setCpos(int cpos) {
+        this.cpos = cpos;
+    }
+
+    protected int cpos;
+    public ElementUiAdapter(RecyclerView mRecyclerViewElements,final NodeUiActivity NodeUiActivity, final ExtendedMeshNode extendedMeshnode,final ModelConfigurationViewModel mViewModel ) {
+        this.mRecyclerViewElements = mRecyclerViewElements;
         this.mContext = NodeUiActivity.getApplicationContext();
         nodeUiActivity = NodeUiActivity;
         this.mViewModel = mViewModel;
@@ -110,7 +122,7 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
         holder.mElementTitle.setText(mProvisionedMeshNode.getNodeName()+" : "+mContext.getString(R.string.element_address, MeshParserUtils.bytesToHex(element.getElementAddress(), false)));
         holder.mElementSubtitle.setText(mContext.getString(R.string.model_count, modelCount));
 
-        final List<MeshModel> models = new ArrayList<>(element.getMeshModels().values());
+        models = new ArrayList<>(element.getMeshModels().values());
         inflateModelViews(holder, models);
 
     }
@@ -118,24 +130,43 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
 
     private void inflateModelViews(final ViewHolder holder, final List<MeshModel> models){
 
-        for(int x = 0; x<models.size();x++) {
-            MeshModel model = models.get(x);
-            if(model instanceof GenericOnOffServerModel){
-                Log.d("inflate", "getElementAddress: " + AddressUtils.getUnicastAddressInt(mElements.get(x).getElementAddress())+" name "+mElements.get(x).getElementAddress());
 
-                mViewModel.setModel(mProvisionedMeshNode, AddressUtils.getUnicastAddressInt(mElements.get(x).getElementAddress()),model.getModelId());
 
-                mViewModel.getGenericOnOffState().observe(nodeUiActivity, genericOnOffStatusUpdate -> {
+
+        mViewModel.getGenericOnOffState().observe(nodeUiActivity, genericOnOffStatusUpdate -> {
             //hideProgressBar();
             final boolean presentState = genericOnOffStatusUpdate.isPresentOnOff();
             final Boolean targetOnOff = genericOnOffStatusUpdate.getTargetOnOff();
-            holder.setPresentState(presentState);
-            holder.setTargetOnOff(targetOnOff);
+            final int steps = genericOnOffStatusUpdate.getSteps();
+            final int resolution = genericOnOffStatusUpdate.getResolution();
+            View view = mRecyclerViewElements.findViewHolderForAdapterPosition(getCpos()).itemView;
+            Button mActionOnOff = (Button) view.findViewById(R.id.action_on_off);
+            if (targetOnOff == null) {
+                if (presentState) {
 
+                    //onOffState.setText(R.string.generic_state_on);
+                    //holder.mActionOnOff.getTag();
+                    Log.d(TAG, "getAdapterPosition: "+getCpos());
+
+                    mActionOnOff.setText(R.string.action_generic_off);
+                } else {
+                    //onOffState.setText(R.string.generic_state_off);
+                    mActionOnOff.setText(R.string.action_generic_on);
+                }
+               // remainingTime.setVisibility(View.GONE);
+            } else {
+                if (!targetOnOff) {
+                    //onOffState.setText(R.string.generic_state_on);
+                    mActionOnOff.setText(R.string.action_generic_off);
+                } else {
+                    //onOffState.setText(R.string.generic_state_off);
+                    mActionOnOff.setText(R.string.action_generic_on);
+                }
+                //remainingTime.setText(getString(R.string.remaining_time, MeshParserUtils.getRemainingTransitionTime(resolution, steps)));
+                //remainingTime.setVisibility(View.VISIBLE);
+            }
         });
 
-        }
-        }
 
 
     }
@@ -173,29 +204,26 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
 
         @BindView(R.id.action_read)
         Button mActionRead;
+
+
         @BindView(R.id.action_on_off)
         Button mActionOnOff;
 
-        public void setPresentState(boolean presentState) {
-            this.presentState = presentState;
-        }
-        public void setTargetOnOff(Boolean targetOnOff) {
-            this.targetOnOff = targetOnOff;
-        }
 
-
-        protected boolean presentState;
+        public void setModel(MeshModel model) {  this.model = model; }
 
 
 
-        protected Boolean targetOnOff;
 
+
+        protected  MeshModel model;
         private ViewHolder(final View view) {
             super(view);
             ButterKnife.bind(this, view);
             mElementContainer.setOnClickListener(this);
             mActionOnOff.setOnClickListener(this);
             mActionRead.setOnClickListener(this);
+
         }
 
         @Override
@@ -203,14 +231,25 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
             switch (v.getId()){
                 case R.id.action_on_off:
                     try {
-                        final ProvisionedMeshNode node = mProvisionedMeshNode;
-                        Log.d(TAG, "onClick: "+mActionOnOff.getText());
+                        for(MeshModel model : models) {
+
+                            if(model instanceof GenericOnOffServerModel){
+                                Log.d("inflate", "getElementAddress: " + AddressUtils.getUnicastAddressInt(mElements.get(this.getAdapterPosition()).getElementAddress())+" holder position: "+this.getAdapterPosition()+ "size: "+model.getModelName());
+                         mViewModel.setModel(mProvisionedMeshNode, AddressUtils.getUnicastAddressInt(mElements.get(this.getAdapterPosition()).getElementAddress()),model.getModelId());
+
+
                         if (mActionOnOff.getText().toString().equals("ON")) {
-                            mViewModel.sendGenericOnOff(node, 0, 0, 0, true);
-                            mActionOnOff.setText(R.string.action_generic_off);
+                            Log.d(TAG, "getAdapterPosition: "+ this.getAdapterPosition() +" from click" );
+                            setCpos(getAdapterPosition());
+                            mViewModel.sendGenericOnOff(mProvisionedMeshNode, 0, 0, 0, true);
+                          //  mActionOnOff.setText(R.string.action_generic_off);
                         } else {
-                            mViewModel.sendGenericOnOff(node, 0, 0, 0, false);
-                            mActionOnOff.setText(R.string.action_generic_on);
+                            setCpos(getAdapterPosition());
+
+                            mViewModel.sendGenericOnOff(mProvisionedMeshNode, 0, 0, 0, false);
+                          //  mActionOnOff.setText(R.string.action_generic_on);
+                        }
+                            }
                         }
                         //uiof.progressBar();
                     } catch (IllegalArgumentException ex) {
@@ -225,24 +264,7 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
                 default:
                     break;
             }
-//            if (targetOnOff == null) {
-//                if (presentState) {
-//                    //onOffState.setText(R.string.generic_state_on);
-//                    mActionOnOff.setText(R.string.action_generic_off);
-//                } else {
-//                    // onOffState.setText(R.string.generic_state_off);
-//                    mActionOnOff.setText(R.string.action_generic_on);
-//                }
-//                // remainingTime.setVisibility(View.GONE);
-//            } else {
-//                if (!targetOnOff) {
-//                    // onOffState.setText(R.string.generic_state_on);
-//                    mActionOnOff.setText(R.string.action_generic_off);
-//                } else {
-//                    //onOffState.setText(R.string.generic_state_off);
-//                    mActionOnOff.setText(R.string.action_generic_on);
-//                }
-//            }
+
         }
     }
 }

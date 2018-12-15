@@ -146,7 +146,7 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable,
         final TextView noAppKeysFound = findViewById(R.id.no_app_keys);
         final View compositionActionContainer = findViewById(R.id.composition_action_container);
         mRecyclerViewElements.setLayoutManager(new LinearLayoutManager(this));
-        final ElementUiAdapter adapter = new ElementUiAdapter(this, mViewModel.getExtendedMeshNode(),mModelViewModel);
+        final ElementUiAdapter adapter = new ElementUiAdapter(mRecyclerViewElements,this, mViewModel.getExtendedMeshNode(),mModelViewModel);
         adapter.setHasStableIds(true);
         adapter.setOnItemClickListener(this);
         mRecyclerViewElements.setAdapter(adapter);
