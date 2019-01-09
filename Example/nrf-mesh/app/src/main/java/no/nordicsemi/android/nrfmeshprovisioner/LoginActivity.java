@@ -22,7 +22,7 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
-    private static final String URL_FOR_LOGIN = "http://XXX.XXX.X.XX/android_login_example/login.php";
+    private static final String URL_FOR_LOGIN = "http://192.168.1.101:5000/userlogin/";
     ProgressDialog progressDialog;
     private EditText loginInputEmail, loginInputPassword;
     private Button btnlogin;
@@ -43,6 +43,8 @@ public class LoginActivity extends AppCompatActivity {
         btnlogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("click", "in onclick");
+               // Log.d(TAG, "onClick: in onclick");
                 loginUser(loginInputEmail.getText().toString(),
                         loginInputPassword.getText().toString());
             }
@@ -59,6 +61,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private void loginUser( final String email, final String password) {
         // Tag used to cancel the request
+        Log.d(TAG, "Register Request email: " + email);
+        Log.d(TAG, "Register Request password: " + password);
         String cancel_req_tag = "login";
         progressDialog.setMessage("Logging you in...");
         showDialog();
@@ -74,12 +78,14 @@ public class LoginActivity extends AppCompatActivity {
                     boolean error = jObj.getBoolean("error");
 
                     if (!error) {
-                        String user = jObj.getJSONObject("user").getString("name");
+                        //String user = jObj.getJSONObject("user").getString("email");
                         // Launch User activity
                         Intent intent = new Intent(
                                 LoginActivity.this,
-                                UserActivity.class);
-                        intent.putExtra("username", user);
+                                MainActivity.class);
+//                        if(user != null) {
+//                            intent.putExtra("username", user);
+//                        }
                         startActivity(intent);
                         finish();
                     } else {

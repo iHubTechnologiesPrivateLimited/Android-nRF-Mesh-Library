@@ -23,10 +23,10 @@ import java.util.Map;
 public class RegisterActivity extends AppCompatActivity {
 
     private static final String TAG = "RegisterActivity";
-    private static final String URL_FOR_REGISTRATION = "http://XXX.XXX.X.XX/android_login_example/register.php";
+    private static final String URL_FOR_REGISTRATION = "http://192.168.1.101:5000/add";
     ProgressDialog progressDialog;
 
-    private EditText signupInputName, signupInputEmail, signupInputPassword, signupInputAge;
+    private EditText signupInputName, signupInputEmail, signupInputPassword, signupInputPhone;
     private Button btnSignUp;
     private Button btnLinkLogin;
     private RadioGroup genderRadioGroup;
@@ -43,12 +43,12 @@ public class RegisterActivity extends AppCompatActivity {
         signupInputName = (EditText) findViewById(R.id.signup_input_name);
         signupInputEmail = (EditText) findViewById(R.id.signup_input_email);
         signupInputPassword = (EditText) findViewById(R.id.signup_input_password);
-        signupInputAge = (EditText) findViewById(R.id.signup_input_age);
+        signupInputPhone = (EditText) findViewById(R.id.signup_input_phone);
 
         btnSignUp = (Button) findViewById(R.id.btn_signup);
         btnLinkLogin = (Button) findViewById(R.id.btn_link_login);
 
-        genderRadioGroup = (RadioGroup) findViewById(R.id.gender_radio_group);
+       // genderRadioGroup = (RadioGroup) findViewById(R.id.gender_radio_group);
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,22 +67,22 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void submitForm() {
 
-        int selectedId = genderRadioGroup.getCheckedRadioButtonId();
-        String gender;
-        if(selectedId == R.id.female_radio_btn)
-            gender = "Female";
-        else
-            gender = "Male";
+      //  int selectedId = genderRadioGroup.getCheckedRadioButtonId();
+        String gender="";
+//        if(selectedId == R.id.female_radio_btn)
+//            gender = "Female";
+//        else
+//            gender = "Male";
 
         registerUser(signupInputName.getText().toString(),
                      signupInputEmail.getText().toString(),
                      signupInputPassword.getText().toString(),
                      gender,
-                     signupInputAge.getText().toString());
+                     signupInputPhone.getText().toString());
     }
 
     private void registerUser(final String name,  final String email, final String password,
-                              final String gender, final String dob) {
+                              final String gender, final String phone) {
         // Tag used to cancel the request
         String cancel_req_tag = "register";
 
@@ -138,9 +138,9 @@ public class RegisterActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("name", name);
                 params.put("email", email);
-                params.put("password", password);
+                params.put("pwd", password);
                 params.put("gender", gender);
-                params.put("age", dob);
+                params.put("phone", phone);
                 return params;
             }
         };

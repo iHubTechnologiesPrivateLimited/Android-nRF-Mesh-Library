@@ -410,6 +410,7 @@
     <string name="title_activity_ui">ui</string>
     <string name="title_activity_login">Sign in</string>
     <!-- Strings related to login & registartion-->
+    <string name="title_activity_register">Sign in</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
@@ -421,7 +422,7 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="hint_dob">Enter Age</string>
+    <string name="hint_dob">Phone</string>
     <string name="hint_password">Password</string>
     <string name="hint_email">Email</string>
     <string name="hint_gender">I am</string>
