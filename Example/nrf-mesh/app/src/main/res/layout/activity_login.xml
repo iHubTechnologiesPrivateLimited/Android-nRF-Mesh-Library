@@ -47,7 +47,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/btn_link_signup"
-        android:background="@null"
+        android:background="@color/login_button_background"
         android:layout_marginTop="3dp"
-        android:textColor="@android:color/black"/>
+        android:textColor="@android:color/white"/>
 </LinearLayout>

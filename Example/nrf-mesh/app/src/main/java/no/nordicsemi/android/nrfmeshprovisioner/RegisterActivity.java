@@ -99,11 +99,10 @@ public class RegisterActivity extends AppCompatActivity {
 
                 try {
                     JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
 
-                    if (!error) {
-                        String user = jObj.getJSONObject("user").getString("name");
-                        Toast.makeText(getApplicationContext(), "Hi " + user +", You are successfully Added!", Toast.LENGTH_SHORT).show();
+                    if (jObj.getString("response") !=null) {
+                       // String user = jObj.getString("name");
+                        Toast.makeText(getApplicationContext(), jObj.getString("response"), Toast.LENGTH_SHORT).show();
 
                         // Launch login activity
                         Intent intent = new Intent(
@@ -113,12 +112,13 @@ public class RegisterActivity extends AppCompatActivity {
                         finish();
                     } else {
 
-                        String errorMsg = jObj.getString("error_msg");
+                        String errorMsg = jObj.getString("response");
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(),
+                            e.getMessage(), Toast.LENGTH_LONG).show();
                 }
 
             }

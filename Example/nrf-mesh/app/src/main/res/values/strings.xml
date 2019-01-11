@@ -428,14 +428,14 @@
     <string name="hint_gender">I am</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
-    <string name="btn_sign_up">Register !!</string>
+    <string name="btn_sign_up">Register</string>
     <string name="err_msg_name">Please enter a Name</string>
     <string name="err_msg_required">Valid Input Required</string>
     <string name="err_msg_email">Please enter a Valid Email</string>
     <string name="err_msg_password">Enter a Password</string>
     <string name="err_msg_dob">Enter a valid D.O.B</string>
-    <string name="btn_login">Login</string>
-    <string name="btn_link_signup">Don\'t have an account yet Register !!</string>
-    <string name="btn_link_login">Already have an account Login !!</string>
+    <string name="btn_login">Sign In</string>
+    <string name="btn_link_signup">Sign Up</string>
+    <string name="btn_link_login">Login</string>
     <!-- Strings related to login & registartion-->
 </resources>

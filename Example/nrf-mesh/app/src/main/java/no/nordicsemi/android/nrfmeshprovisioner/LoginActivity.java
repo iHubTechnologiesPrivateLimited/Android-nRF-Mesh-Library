@@ -45,8 +45,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d("click", "in onclick");
                // Log.d(TAG, "onClick: in onclick");
-                loginUser(loginInputEmail.getText().toString(),
-                        loginInputPassword.getText().toString());
+              //  progressDialog.setMessage("Register Request email: " + loginInputEmail.getText().toString()+"Register Request password: " + loginInputPassword.getText().toString());
+              //  showDialog();
+
+               loginUser(loginInputEmail.getText().toString(),
+                       loginInputPassword.getText().toString());
             }
         });
 
@@ -71,31 +74,40 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(String response) {
+               // progressDialog.setMessage("onResponse: "+response.toString());
+                //showDialog();
                 Log.d(TAG, "Register Response: " + response.toString());
                 hideDialog();
                 try {
                     JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
-
-                    if (!error) {
+                   // boolean error = jObj.getBoolean("error");
+                    //if (Integer.parseInt(jObj.getString("status_code")) == 200)
+                    if (Integer.parseInt(jObj.getString("status_code")) == 200) {
                         //String user = jObj.getJSONObject("user").getString("email");
+                        //                        if(user != null) {
+//                            intent.putExtra("username", user);
+//                        }
                         // Launch User activity
+
+
                         Intent intent = new Intent(
                                 LoginActivity.this,
                                 MainActivity.class);
-//                        if(user != null) {
-//                            intent.putExtra("username", user);
-//                        }
+
                         startActivity(intent);
                         finish();
                     } else {
 
-                        String errorMsg = jObj.getString("error_msg");
+
+                        String errorMsg = jObj.getString("error");
                         Toast.makeText(getApplicationContext(),
                                 errorMsg, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+
+                    Toast.makeText(getApplicationContext(),
+                            e.getMessage(), Toast.LENGTH_LONG).show();
+
                 }
 
             }
