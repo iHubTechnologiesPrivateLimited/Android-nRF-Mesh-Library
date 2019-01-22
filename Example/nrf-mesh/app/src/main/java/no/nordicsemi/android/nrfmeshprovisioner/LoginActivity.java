@@ -1,6 +1,8 @@
 package no.nordicsemi.android.nrfmeshprovisioner;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,12 +24,12 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
-    private static final String URL_FOR_LOGIN = "http://192.168.1.101:5000/userlogin/";
+    private static final String URL_FOR_LOGIN = "http://192.168.1.106:5000/userlogin/";
     ProgressDialog progressDialog;
     private EditText loginInputEmail, loginInputPassword;
     private Button btnlogin;
     private Button btnLinkSignup;
-
+    SharedPreferences sharedpreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,19 +85,33 @@ public class LoginActivity extends AppCompatActivity {
                    // boolean error = jObj.getBoolean("error");
                     //if (Integer.parseInt(jObj.getString("status_code")) == 200)
                     if (Integer.parseInt(jObj.getString("status_code")) == 200) {
-                        //String user = jObj.getJSONObject("user").getString("email");
-                        //                        if(user != null) {
-//                            intent.putExtra("username", user);
-//                        }
-                        // Launch User activity
 
+                        // get profile data from json object(jObj)
+                        // the idea is to save profile data to shared preferences
+                        // and call them when ever needed
+                        String email = jObj.getString("email");
+                        String phone = jObj.getString("phone");
+                        String id = jObj.getString("id");
+                        String name = jObj.getString("full_name");
+                        String profileData = response.toString();
+                        if(!email.equals("") && !phone.equals("")) {
+                         sharedpreferences = getSharedPreferences("profilepref", Context.MODE_PRIVATE);
+                         SharedPreferences.Editor editor = sharedpreferences.edit();
+                            editor.putString("name", name);
+                            editor.putString("phone", phone);
+                            editor.putString("email", email);
+                            editor.putString("id", id);
+                            editor.putString("profile", profileData);
+                            editor.commit();
+                            // Launch Main activity
+                            Intent intent = new Intent(
+                                    LoginActivity.this,
+                                    MainActivity.class);
 
-                        Intent intent = new Intent(
-                                LoginActivity.this,
-                                MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
 
-                        startActivity(intent);
-                        finish();
                     } else {
 
 

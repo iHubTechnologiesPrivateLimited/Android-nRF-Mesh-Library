@@ -409,7 +409,7 @@
     <string name="invalid_value">Invalid value!</string>
     <string name="title_activity_ui">ui</string>
     <string name="title_activity_login">Sign in</string>
-    <!-- Strings related to login & registartion-->
+    <!--ihub edits Strings related to login & registartion-->
     <string name="title_activity_register">Sign in</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -437,5 +437,11 @@
     <string name="btn_login">Sign In</string>
     <string name="btn_link_signup">Sign Up</string>
     <string name="btn_link_login">Login</string>
-    <!-- Strings related to login & registartion-->
+    <!--ihub edits Strings related to login & registartion-->
+
+    <!--ihub edits Strings related to change password-->
+    <string name="changepassword">Change Password</string>
+    <string name="submit">Submit</string>
+    <string name="reenter_password">Re-Enter Password</string>
+    <!--ihub edits Strings related to change password-->
 </resources>

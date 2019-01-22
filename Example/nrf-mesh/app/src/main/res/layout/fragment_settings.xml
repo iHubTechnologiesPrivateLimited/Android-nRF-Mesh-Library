@@ -233,6 +233,16 @@
                 android:padding="18dp"
 
                 />
+                <!--below change password include uses reusable layout-->
+                <!--with title,image,text attributes-->
+                <include
+                    android:id="@+id/changepasswordlayout"
+                    layout="@layout/layout_container"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ui_settings_card"/>
             </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.CardView>
 

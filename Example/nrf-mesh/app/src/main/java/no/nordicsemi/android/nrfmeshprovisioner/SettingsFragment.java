@@ -200,11 +200,11 @@ public class SettingsFragment extends Fragment implements Injectable,
         manageAppKeysView = containerManageAppKeys.findViewById(R.id.text);
 
 //        ihub edits start
-//        final View containerManageAliasNames = rootView.findViewById(R.id.container_alias_names);
-//        containerManageAliasNames.findViewById(R.id.image).setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ic_folder_key_black_24dp_alpha));
-//        final TextView manageAliasNames = containerManageAliasNames.findViewById(R.id.title);
-//        manageAliasNames.setText(R.string.summary_alias_name);
-//        manageAliasNamesView = containerManageAliasNames.findViewById(R.id.text);
+        final View changepw = rootView.findViewById(R.id.changepasswordlayout);
+        changepw.findViewById(R.id.image).setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ic_folder_key_black_24dp_alpha));
+        final TextView managepw = changepw.findViewById(R.id.title);
+        managepw.setText(R.string.changepassword);
+       // manageAliasNamesView = changepw.findViewById(R.id.text);
 
         SwitchCompat switchCompat;
         switchCompat = (SwitchCompat) rootView.findViewById(R.id.ui_settings_card);
@@ -240,17 +240,12 @@ public class SettingsFragment extends Fragment implements Injectable,
             startActivityForResult(intent,  ManageAppKeysActivity.MANAGE_APP_KEYS);
         });
         //        ihub edits start
-//        containerManageAliasNames.setOnClickListener(v -> {
-//
-//            final Intent intent = new Intent(getActivity(), AliasNameActivity.class);
-//            //final Map nodes = ;
-//           // HashMap nodes = new HashMap();
-//           // nodes.put("nodelist",mViewModel.getProvisionedNodesLiveData().getProvisionedNodes());
-//            //intent.putExtra(AliasNameActivity.ALIAS_KEYS, nodes);
-//           // startActivityForResult(intent,  AliasNameActivity.MANAGE_ALIAS_NAMES);
-//            startActivity(intent);
-//
-//        });
+        changepw.setOnClickListener(v -> {
+
+            final Intent intent = new Intent(getActivity(), ChangePasswordaActivity.class);
+            startActivity(intent);
+
+        });
         //        ihub edits end
         mViewModel.getProvisioningData().observe(this, provisioningData -> {
             if(provisioningData.getProvisioningSettings() != null) {
