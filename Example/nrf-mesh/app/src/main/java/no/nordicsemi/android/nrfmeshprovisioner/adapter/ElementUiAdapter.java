@@ -24,6 +24,7 @@ package no.nordicsemi.android.nrfmeshprovisioner.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -39,8 +40,11 @@ import android.widget.Toast;
 
 import org.w3c.dom.Node;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,7 +57,9 @@ import no.nordicsemi.android.meshprovisioner.utils.CompositionDataParser;
 import no.nordicsemi.android.meshprovisioner.utils.Element;
 import no.nordicsemi.android.meshprovisioner.utils.MeshParserUtils;
 import no.nordicsemi.android.nrfmeshprovisioner.BaseModelConfigurationActivity;
+import no.nordicsemi.android.nrfmeshprovisioner.BindAppKeysActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.GenericOnOffServerActivity;
+import no.nordicsemi.android.nrfmeshprovisioner.ManageAppKeysActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.NodeConfigurationActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.NodeUiActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.R;
@@ -127,9 +133,98 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
 
     }
 
-
+ int tmp = 0;
     private void inflateModelViews(final ViewHolder holder, final List<MeshModel> models){
 
+
+        {
+            boolean tmp1 = true;
+            final Handler handler = new Handler();
+            Timer t = new Timer();
+            final Handler handler1 = new Handler();
+            Timer t1 = new Timer();
+            t.scheduleAtFixedRate(new TimerTask() {
+                public void run() {
+                    handler.post(new Runnable() {
+                        public void run() {
+
+
+
+                    Log.d("inflate", "above for: " + mElements.size());
+
+                    for(tmp=0;tmp<mElements.size();tmp++) {
+
+                    Log.d("inflate", "getElementAddress: " + AddressUtils.getUnicastAddressInt(mElements.get(tmp).getElementAddress()) + " holder position: " + tmp + "size: " + mElements.size());
+
+
+//                    t1.schedule(new TimerTask() {
+//                        public void run() {
+//                            handler1.post(new Runnable() {
+//                                public void run() {
+                                    for(MeshModel model : models) {
+                                        Log.d("inflate", "models " + models.size());
+                                        if (model instanceof GenericOnOffServerModel) {
+                                    //int x = tmp;
+                                    mViewModel.setModel(mProvisionedMeshNode, AddressUtils.getUnicastAddressInt(mElements.get(tmp).getElementAddress()), model.getModelId());
+                                    setCpos(tmp);
+                                    mViewModel.sendGenericOnOff(mProvisionedMeshNode, 0, 0, 0, false);
+                                    //  mActionOnOff.setText(R.string.action_generic_off);
+                                            try {
+                                                Thread.sleep(2000);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                            mViewModel.sendGenericOnOff(mProvisionedMeshNode, 0, 0, 0, true);
+                                            //  mActionOnOff.setText(R.string.action_generic_on);
+                                            Log.d("inflate", "in after schdule " );
+                                            try {
+                                                Thread.sleep(2000);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+
+//                                }
+//                            });
+//                        }
+//                    }, 2000);
+
+
+//                    Log.d("inflate", "between schdule " );
+//                          t1.schedule(new TimerTask() {
+//                              public void run() {
+//                                  handler1.post(new Runnable() {
+//                                      public void run() {
+//                                          //int x = tmp;
+//                                          for(MeshModel model : models) {
+//
+//                                              if(model instanceof GenericOnOffServerModel){
+//                                          mViewModel.setModel(mProvisionedMeshNode, AddressUtils.getUnicastAddressInt(mElements.get(tmp).getElementAddress()), model.getModelId());
+//                                          setCpos(tmp);
+//
+//
+//                                              }
+//                                          }
+//                                      }
+//                                  });
+//                              }
+//                          }, 2000);
+
+
+                                       }
+
+
+
+
+
+
+                            }
+                        });
+                }
+            }, 0,mElements.size()*3000);
+            //uiof.progressBar();
+        }
 
 
 
@@ -234,7 +329,7 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
                         for(MeshModel model : models) {
 
                             if(model instanceof GenericOnOffServerModel){
-                                Log.d("inflate", "getElementAddress: " + AddressUtils.getUnicastAddressInt(mElements.get(this.getAdapterPosition()).getElementAddress())+" holder position: "+this.getAdapterPosition()+ "size: "+model.getModelName());
+                                Log.d("inflate", "getElementAddress: " + AddressUtils.getUnicastAddressInt(mElements.get(this.getAdapterPosition()).getElementAddress())+" holder position: "+this.getAdapterPosition()+ "model.getModelId(): "+model.getModelId());
                          mViewModel.setModel(mProvisionedMeshNode, AddressUtils.getUnicastAddressInt(mElements.get(this.getAdapterPosition()).getElementAddress()),model.getModelId());
 
 
@@ -249,7 +344,7 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
                             mViewModel.sendGenericOnOff(mProvisionedMeshNode, 0, 0, 0, false);
                           //  mActionOnOff.setText(R.string.action_generic_on);
                         }
-                            }
+                        }
                         }
                         //uiof.progressBar();
                     } catch (IllegalArgumentException ex) {
