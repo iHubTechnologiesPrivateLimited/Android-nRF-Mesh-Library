@@ -55,18 +55,20 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import no.nordicsemi.android.nrfmeshprovisioner.adapter.DevicesAdapter;
 import no.nordicsemi.android.nrfmeshprovisioner.adapter.ExtendedBluetoothDevice;
+import no.nordicsemi.android.nrfmeshprovisioner.ble.BleMeshManager;
 import no.nordicsemi.android.nrfmeshprovisioner.di.Injectable;
 import no.nordicsemi.android.nrfmeshprovisioner.utils.Utils;
 import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.ProvisionedNodesScannerViewModel;
-import no.nordicsemi.android.nrfmeshprovisioner.livedata.ScannerLiveData;
-import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.SharedViewModel;
+
+import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.ScannerLiveData;
+
 
 public class ProvisionedNodesScannerActivity extends AppCompatActivity implements Injectable, DevicesAdapter.OnItemClickListener {
 	private static final int REQUEST_ACCESS_COARSE_LOCATION = 1022; // random number
 	public static int CONNECT_TO_NETWORK = 1023; //random number
 	public static final String SELECTED_NODE = "SELECTED_NODE";
 	public static final String NETWORK_ID = "NETWORK_ID";
-	SharedViewModel mSharedViewModel;
+
 	@Inject
 	ViewModelProvider.Factory mViewModelFactory;
 
@@ -79,16 +81,12 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 	@BindView(R.id.bluetooth_off) View mNoBluetoothView;
 
 	private ProvisionedNodesScannerViewModel mViewModel;
-	private String mNetworkId;
-	private boolean isdeviceconnected = false;
+
 	@Override
 	protected void onCreate(@Nullable final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_scanner);
 		ButterKnife.bind(this);
-
-		final Intent intent = getIntent();
-		mNetworkId = intent.getStringExtra(NETWORK_ID);
 
 		final Toolbar toolbar = findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -110,14 +108,15 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 		recyclerViewDevices.setAdapter(adapter);
 		//Toast.makeText(this, " searching  ", Toast.LENGTH_SHORT).show();
 
-		mViewModel.isDeviceReady().observe(this, isDeviceReady -> {
-			//Toast.makeText(this, " searching  "+ isDeviceReady, Toast.LENGTH_SHORT).show();
 
+			//Toast.makeText(this, " searching  "+ isDeviceReady, Toast.LENGTH_SHORT).show();
+		/*mViewModel.isDeviceReady().observe(this, isDeviceReady -> {
 			if(isDeviceReady){
 				//Toast.makeText(this, " isDeviceReady in if "+isDeviceReady, Toast.LENGTH_SHORT).show();
 				finish();
 			}
-		});
+		});*/
+
 
 		mViewModel.getScannerState().observe(this, ScannerLiveData-> {
 			//Toast.makeText(this, " Found observe ", Toast.LENGTH_SHORT).show();
@@ -126,25 +125,25 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 				//Toast.makeText(this," mSharedViewModel "+ , Toast.LENGTH_SHORT).show();
 				//Toast.makeText(this, " Found devices "+ScannerLiveData.getDevices().get(0).getDevice().getName(), Toast.LENGTH_SHORT).show();
 				stopScan();
-								for(ExtendedBluetoothDevice device: ScannerLiveData.getDevices()){
-									//Toast.makeText(getApplicationContext(), " Found device ", Toast.LENGTH_SHORT).show();
-									final Handler handler = new Handler();
-									Timer t = new Timer();
-									t.schedule(new TimerTask() {
-										public void run() {
-											handler.post(new Runnable() {
-												public void run() {
+				for(ExtendedBluetoothDevice device: ScannerLiveData.getDevices()){
+					//Toast.makeText(getApplicationContext(), " Found device ", Toast.LENGTH_SHORT).show();
+					final Handler handler = new Handler();
+					Timer t = new Timer();
+					t.schedule(new TimerTask() {
+						public void run() {
+							handler.post(new Runnable() {
+								public void run() {
 									Log.d("connectAuto", "ScannerLiveData");
 
 									final Intent meshProvisionerIntent = new Intent(getApplicationContext(), ReconnectActivity.class);
 									meshProvisionerIntent.putExtra(Utils.EXTRA_DEVICE, device);
 									startActivityForResult(meshProvisionerIntent, ReconnectActivity.REQUEST_DEVICE_READY);
-												}
-											});
-										}
-									},100);
-
 								}
+							});
+						}
+					},100);
+
+				}
 
 
 
@@ -152,7 +151,6 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 			}
 
 		});
-
 
 
 	}
@@ -180,7 +178,7 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 		if(requestCode == ReconnectActivity.REQUEST_DEVICE_READY){
 			if(resultCode == RESULT_OK){
 				final boolean isDeviceReady = data.getBooleanExtra(Utils.ACTIVITY_RESULT, false);
-				isdeviceconnected = isDeviceReady;
+
 				if(isDeviceReady){
 					Log.d("connectAuto", "DeviceReady");
 					finish();
@@ -246,7 +244,7 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 				mNoBluetoothView.setVisibility(View.GONE);
 
 				// We are now OK to start scanning
-				mViewModel.startScan(mNetworkId);
+				mViewModel.startScan(BleMeshManager.MESH_PROXY_UUID);
 				mScanningView.setVisibility(View.VISIBLE);
 
 				if (state.isEmpty()) {
