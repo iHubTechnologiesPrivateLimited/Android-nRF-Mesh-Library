@@ -285,18 +285,18 @@ DialogFragmentPermissionRationale.StoragePermissionListener {
 
         });
         //        ihub edits end
-        mViewModel.getProvisioningData().observe(this, provisioningData -> {
-            if(provisioningData.getProvisioningSettings() != null) {
-                networkNameView.setText(provisioningData.getNetworkName());
-                globalTtlView.setText(String.valueOf(provisioningData.getGlobalTtl()));
-                keyView.setText(getString(R.string.hex_format, provisioningData.getNetworkKey()));
-                keyIndexView.setText(getString(R.string.hex_format, String.format(Locale.US, "%03X", provisioningData.getKeyIndex())));
-                flagsView.setText(parseFlagsMessage(provisioningData.getFlags()));
-                ivIndexView.setText(getString(R.string.hex_format, String.format(Locale.US, "%08X", provisioningData.getIvIndex())));
-                unicastAddressView.setText(getString(R.string.hex_format, String.format(Locale.US, "%04X", provisioningData.getUnicastAddress())));
-                manageAppKeysView.setText(getString(R.string.app_key_count, provisioningData.getAppKeys().size()));
-                //manageAliasNamesView.setText(getString(R.string.alias_name_count, mViewModel.getProvisionedNodesLiveData().getProvisionedNodes().size()));
-            }
+//        mViewModel.getProvisioningData().observe(this, provisioningData -> {
+//            if(provisioningData.getProvisioningSettings() != null) {
+//                networkNameView.setText(provisioningData.getNetworkName());
+//                globalTtlView.setText(String.valueOf(provisioningData.getGlobalTtl()));
+//                keyView.setText(getString(R.string.hex_format, provisioningData.getNetworkKey()));
+//                keyIndexView.setText(getString(R.string.hex_format, String.format(Locale.US, "%03X", provisioningData.getKeyIndex())));
+//                flagsView.setText(parseFlagsMessage(provisioningData.getFlags()));
+//                ivIndexView.setText(getString(R.string.hex_format, String.format(Locale.US, "%08X", provisioningData.getIvIndex())));
+//                unicastAddressView.setText(getString(R.string.hex_format, String.format(Locale.US, "%04X", provisioningData.getUnicastAddress())));
+//                manageAppKeysView.setText(getString(R.string.app_key_count, provisioningData.getAppKeys().size()));
+//                //manageAliasNamesView.setText(getString(R.string.alias_name_count, mViewModel.getProvisionedNodesLiveData().getProvisionedNodes().size()));
+//            }
 
         mViewModel.getNetworkLoadState().observe(this, networkImportState -> {
             final String title = getString(R.string.title_network_import);
@@ -387,23 +387,23 @@ DialogFragmentPermissionRationale.StoragePermissionListener {
 
     }
 
-    private String parseFlagsMessage(final int flags) {
-        final int keyRefreshFlag = MeshParserUtils.getBitValue(flags, 0);
-        final int ivUpdateFlag = MeshParserUtils.getBitValue(flags, 1);
-        final StringBuilder flagsText = new StringBuilder();
+        private String parseFlagsMessage(final int flags) {
+            final int keyRefreshFlag = MeshParserUtils.getBitValue(flags, 0);
+            final int ivUpdateFlag = MeshParserUtils.getBitValue(flags, 1);
+            final StringBuilder flagsText = new StringBuilder();
 
-        if (keyRefreshFlag == 0)
-            flagsText.append(getString(R.string.key_refresh_phase_0)).append(", ");
-        else
-            flagsText.append(getString(R.string.key_refresh_phase_2)).append(", ");
+            if (keyRefreshFlag == 0)
+                flagsText.append(getString(R.string.key_refresh_phase_0)).append(", ");
+            else
+                flagsText.append(getString(R.string.key_refresh_phase_2)).append(", ");
 
-        if (ivUpdateFlag == 0)
-            flagsText.append(getString(R.string.normal_operation));
-        else
-            flagsText.append(getString(R.string.iv_update_active));
+            if (ivUpdateFlag == 0)
+                flagsText.append(getString(R.string.normal_operation));
+            else
+                flagsText.append(getString(R.string.iv_update_active));
 
-        return flagsText.toString();
-    }
+            return flagsText.toString();
+        }
 
     @Override
     public void onNetworkNameEntered(final String networkName) {

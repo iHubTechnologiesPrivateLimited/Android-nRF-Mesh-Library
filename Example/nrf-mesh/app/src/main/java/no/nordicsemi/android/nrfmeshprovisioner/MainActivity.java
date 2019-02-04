@@ -53,8 +53,7 @@ import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.SharedViewModel;
 
 public class MainActivity extends AppCompatActivity implements Injectable, HasSupportFragmentInjector, BottomNavigationView.OnNavigationItemSelectedListener,
         BottomNavigationView.OnNavigationItemReselectedListener,
-        ScannerFragment.ScannerFragmentListener, FragmentManager.OnBackStackChangedListener,
-       UiFragment.UiFragmentListener {
+        ScannerFragment.ScannerFragmentListener, FragmentManager.OnBackStackChangedListener {
 
     private static final String CURRENT_FRAGMENT = "CURRENT_FRAGMENT";
 

@@ -22,193 +22,157 @@
 
 package no.nordicsemi.android.nrfmeshprovisioner;
 
-import android.arch.lifecycle.ViewModelProvider;
-import android.arch.lifecycle.ViewModelProviders;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
 
-import javax.inject.Inject;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import no.nordicsemi.android.meshprovisioner.configuration.ConfigAppKeyStatus;
-import no.nordicsemi.android.meshprovisioner.configuration.ProvisionedMeshNode;
-import no.nordicsemi.android.meshprovisioner.configuration.MeshModel;
-import no.nordicsemi.android.meshprovisioner.models.GenericLevelServerModel;
-import no.nordicsemi.android.meshprovisioner.models.GenericOnOffServerModel;
-import no.nordicsemi.android.meshprovisioner.models.VendorModel;
-import no.nordicsemi.android.meshprovisioner.utils.AddressUtils;
-import no.nordicsemi.android.meshprovisioner.utils.Element;
+import no.nordicsemi.android.meshprovisioner.Features;
+import no.nordicsemi.android.meshprovisioner.transport.Element;
+import no.nordicsemi.android.meshprovisioner.transport.MeshModel;
+import no.nordicsemi.android.meshprovisioner.transport.ProvisionedMeshNode;
+import no.nordicsemi.android.meshprovisioner.utils.CompanyIdentifiers;
+import no.nordicsemi.android.meshprovisioner.utils.CompositionDataParser;
+import no.nordicsemi.android.meshprovisioner.utils.MeshParserUtils;
 import no.nordicsemi.android.nrfmeshprovisioner.adapter.AddedAppKeyAdapter;
-import no.nordicsemi.android.nrfmeshprovisioner.adapter.ElementAdapter;
 import no.nordicsemi.android.nrfmeshprovisioner.adapter.ElementUiAdapter;
 import no.nordicsemi.android.nrfmeshprovisioner.di.Injectable;
 import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentAppKeyAddStatus;
+import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentFilterAddAddress;
+import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentProxySet;
 import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentResetNode;
-import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentTransactionStatus;
 import no.nordicsemi.android.nrfmeshprovisioner.utils.Utils;
-import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.ModelConfigurationViewModel;
-import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.NodeConfigurationViewModel;
 import no.nordicsemi.android.nrfmeshprovisioner.widgets.ItemTouchHelperAdapter;
-import no.nordicsemi.android.nrfmeshprovisioner.widgets.RemovableViewHolder;
 
-import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_DATA_MODEL_NAME;
-import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_DEVICE;
-import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_ELEMENT_ADDRESS;
-import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_MODEL_ID;
-
-public class NodeUiActivity extends AppCompatActivity implements Injectable,
-        ElementUiAdapter.OnItemClickListener,
-        DialogFragmentAppKeyAddStatus.DialogFragmentAppKeyAddStatusListener,
+public class NodeUiActivity extends AppCompatActivity implements Injectable, ElementUiAdapter.OnItemClickListener, DialogFragmentAppKeyAddStatus.DialogFragmentAppKeyAddStatusListener,
+        DialogFragmentProxySet.DialogFragmentProxySetListener,
+        DialogFragmentFilterAddAddress.DialogFragmentFilterAddressListener,
         DialogFragmentResetNode.DialogFragmentNodeResetListener,
-        AddedAppKeyAdapter.OnItemClickListener, ItemTouchHelperAdapter {
+        AddedAppKeyAdapter.OnItemClickListener,
+        ItemTouchHelperAdapter {
 
     private final static String TAG = NodeUiActivity.class.getSimpleName();
-    private static final String PROGRESS_BAR_STATE = "PROGRESS_BAR_STATE";
-    private static final String DIALOG_FRAGMENT_APP_KEY_STATUS = "DIALOG_FRAGMENT_APP_KEY_STATUS";
-    private static final long DELAY = 10 * 1000; //Using the incomplete timer duration
+    private RecyclerView mRecyclerView;
 
-    @Inject
-    ViewModelProvider.Factory mViewModelFactory;
-
-    @BindView(R.id.main_container)
-    NestedScrollView mContainer;
-    @BindView(R.id.action_get_compostion_data)
-    Button actionGetCompositionData;
-//    @BindView(R.id.action_add_app_keys)
-//    Button actionAddAppkey;
-//    @BindView(R.id.action_reset_node)
-//    Button actionResetNode;
-    @BindView(R.id.recycler_view_elements)
-    RecyclerView mRecyclerViewElements;
-    @BindView(R.id.composition_data_card)
-    CardView mCompositionDataCard;
-    @BindView(R.id.configuration_progress_bar)
-    ProgressBar mProgressbar;
-
-    private NodeConfigurationViewModel mViewModel;
-    private AddedAppKeyAdapter mAdapter;
-    private Handler mHandler;
-    protected ModelConfigurationViewModel mModelViewModel;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mesh_node_ui);
+        setContentView(R.layout.activity_node_details);
         ButterKnife.bind(this);
-        mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(NodeConfigurationViewModel.class);
-        mModelViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ModelConfigurationViewModel.class);
 
         final Intent intent = getIntent();
         final ProvisionedMeshNode node = intent.getParcelableExtra(Utils.EXTRA_DEVICE);
-        if(savedInstanceState == null) {
-            if (node == null)
-                finish();
-            mViewModel.setMeshNode(node);
-        } else {
-            if(savedInstanceState.getBoolean(PROGRESS_BAR_STATE)) {
-                mProgressbar.setVisibility(View.VISIBLE);
-                disableClickableViews();
-            } else {
-                mProgressbar.setVisibility(View.INVISIBLE);
-                enableClickableViews();
-            }
-        }
+        if(node == null)
+            finish();
 
-        mHandler = new Handler();
-        // Set up views
+        final ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.title_switch_board);
-        getSupportActionBar().setSubtitle(node.getNodeName());
+        getSupportActionBar().setTitle(node.getNodeName());
 
-        actionGetCompositionData = findViewById(R.id.action_get_compostion_data);
-        //actionAddAppkey = findViewById(R.id.action_add_app_keys);
-       // actionResetNode = findViewById(R.id.action_reset_node);
-        final TextView noElementsFound = findViewById(R.id.no_elements);
-        final TextView noAppKeysFound = findViewById(R.id.no_app_keys);
-        final View compositionActionContainer = findViewById(R.id.composition_action_container);
-        mRecyclerViewElements.setLayoutManager(new LinearLayoutManager(this));
-        final ElementUiAdapter adapter = new ElementUiAdapter(mRecyclerViewElements,this, mViewModel.getExtendedMeshNode(),mModelViewModel);
-        adapter.setHasStableIds(true);
-        adapter.setOnItemClickListener(this);
-        mRecyclerViewElements.setAdapter(adapter);
+        final View containerNodeName = findViewById(R.id.container_element_count);
+        containerNodeName.setClickable(false);
+        final TextView nodeName = containerNodeName.findViewById(R.id.text);
+        nodeName.setText(node.getNodeName());
 
+        final View containerProvisioningTimeStamp = findViewById(R.id.container_timestamp);
+        containerProvisioningTimeStamp.setClickable(false);
+        final TextView timestamp = containerProvisioningTimeStamp.findViewById(R.id.text);
+        final String format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG).format(node.getTimeStamp());
+        timestamp.setText(format);
 
+        final View containerUnicastAddress = findViewById(R.id.container_supported_algorithm);
+        containerUnicastAddress.setClickable(false);
+        final TextView unicastAddress = containerUnicastAddress.findViewById(R.id.text);
+        unicastAddress.setText(MeshParserUtils.bytesToHex(node.getUnicastAddress(), false));
 
+        final View containerDeviceKey = findViewById(R.id.container_device_key);
+        containerDeviceKey.setClickable(false);
+        final TextView deviceKey = containerDeviceKey.findViewById(R.id.text);
+        deviceKey.setText(MeshParserUtils.bytesToHex(node.getDeviceKey(), false));
 
-        mViewModel.getExtendedMeshNode().observe(this, extendedMeshNode -> {
-            if(extendedMeshNode.getMeshNode() == null) {
-                finish();
-                return;
-            }
-
-            if (extendedMeshNode.hasElements()) {
-                compositionActionContainer.setVisibility(View.GONE);
-                noElementsFound.setVisibility(View.INVISIBLE);
-                mRecyclerViewElements.setVisibility(View.VISIBLE);
-            } else {
-                noElementsFound.setVisibility(View.VISIBLE);
-                compositionActionContainer.setVisibility(View.VISIBLE);
-                mRecyclerViewElements.setVisibility(View.INVISIBLE);
-            }
-
-
-        });
-
-        actionGetCompositionData.setOnClickListener(v -> {
-            showProgressbar();
-            mViewModel.sendGetCompositionData();
-        });
-
-
-
-
-
-        mViewModel.getCompositionDataStatus().observe(this, compositionDataStatusLiveData -> {
-            hideProgressBar();
-            if(!compositionDataStatusLiveData.isSuccess()){
-                DialogFragmentTransactionStatus fragmentMessage = DialogFragmentTransactionStatus.newInstance("Transaction Failed", getString(R.string.operation_timed_out));
-                fragmentMessage.show(getSupportFragmentManager(), null);
+        final View copyDeviceKey = findViewById(R.id.copy);
+        copyDeviceKey.setOnClickListener(v -> {
+            if(clipboard != null) {
+                final ClipData clipDeviceKey = ClipData.newPlainText("Device Key", MeshParserUtils.bytesToHex(node.getDeviceKey(), false));
+                clipboard.setPrimaryClip(clipDeviceKey);
+                Toast.makeText(NodeUiActivity.this, R.string.device_key_clipboard_copied, Toast.LENGTH_SHORT).show();
             }
         });
 
+        final View containerCompanyIdentifier = findViewById(R.id.container_company_identifier);
+        containerCompanyIdentifier.setClickable(false);
+        final TextView companyIdentifier = containerCompanyIdentifier.findViewById(R.id.text);
+        if(node.getCompanyIdentifier() != null) {
+            companyIdentifier.setText(CompanyIdentifiers.getCompanyName(node.getCompanyIdentifier().shortValue()));
+        } else {
+            companyIdentifier.setText(R.string.unavailable);
+        }
 
+        final View containerProductIdentifier = findViewById(R.id.container_product_identifier);
+        containerProductIdentifier.setClickable(false);
+        final TextView productIdentifier = containerProductIdentifier.findViewById(R.id.text);
+        if(node.getProductIdentifier() != null) {
+            productIdentifier.setText(CompositionDataParser.formatProductIdentifier(node.getProductIdentifier().shortValue(), false));
+        } else {
+            productIdentifier.setText(R.string.unavailable);
+        }
 
-        mViewModel.getTransactionStatus().observe(this, transactionFailedLiveData -> {
-            hideProgressBar();
-            final String message;
-            if(transactionFailedLiveData.isIncompleteTimerExpired()){
-                message = getString(R.string.segments_not_received_timed_out);
-            } else {
-                message = getString(R.string.operation_timed_out);
-            }
-            DialogFragmentTransactionStatus fragmentMessage = DialogFragmentTransactionStatus.newInstance(getString(R.string.title_transaction_failed), message);
-            fragmentMessage.show(getSupportFragmentManager(), null);
-        });
+        final View containerProductVersion = findViewById(R.id.container_product_version);
+        containerProductVersion.setClickable(false);
+        final TextView productVersion = containerProductVersion.findViewById(R.id.text);
+        if(node.getVersionIdentifier() != null) {
+            productVersion.setText(CompositionDataParser.formatVersionIdentifier(node.getVersionIdentifier().shortValue(), false));
+        } else {
+            productVersion.setText(R.string.unavailable);
+        }
 
-        mViewModel.isConnected().observe(this, isConnected -> {
-            if(isConnected != null && !isConnected)
-                finish();
-        });
+        final View containerCrpl = findViewById(R.id.container_crpl);
+        containerCrpl.setClickable(false);
+        final TextView crpl = containerCrpl.findViewById(R.id.text);
+        if(node.getCrpl() != null) {
+            crpl.setText(CompositionDataParser.formatReplayProtectionCount(node.getCrpl().shortValue(), false));
+        } else {
+            crpl.setText(R.string.unavailable);
+        }
 
+        final View containerFeatures = findViewById(R.id.container_features);
+        containerFeatures.setClickable(false);
+        final TextView features = containerFeatures.findViewById(R.id.text);
+        if(node.getNodeFeatures() != null) {
+            features.setText(parseFeatures(node.getNodeFeatures()));
+        } else {
+            features.setText(R.string.unavailable);
+        }
+
+        final TextView view =  findViewById(R.id.no_elements_view);
+        mRecyclerView = findViewById(R.id.recycler_view_elements);
+        if(node.getElements().isEmpty()){
+            view.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.INVISIBLE);
+        } else {
+            view.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+            final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+            mRecyclerView.setLayoutManager(linearLayoutManager);
+            final ElementUiAdapter adapter = new ElementUiAdapter(this, node);
+            adapter.setOnItemClickListener(this);
+            mRecyclerView.setAdapter(adapter);
+        }
     }
 
     @Override
@@ -221,8 +185,6 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable,
         return false;
     }
 
-
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -231,9 +193,6 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable,
     @Override
     protected void onStop() {
         super.onStop();
-        if(isFinishing()){
-            mHandler.removeCallbacksAndMessages(null);
-        }
     }
 
     @Override
@@ -241,85 +200,32 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable,
         super.onBackPressed();
     }
 
-    @Override
-    protected void onSaveInstanceState(final Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(PROGRESS_BAR_STATE, mProgressbar.getVisibility() == View.VISIBLE);
+
+    public void onItemClick(final int position) {
+        mRecyclerView.scrollToPosition(position);
     }
 
-    @Override
-    public void onElementItemClick(final ProvisionedMeshNode meshNode, final Element element, final MeshModel model) {
-        startActivity(meshNode, element, model);
-    }
-
-    @Override
-    public void onAppKeyAddStatusReceived() {
-
-    }
-
-    @Override
-    public void onItemDismiss(final RemovableViewHolder viewHolder) {
-
-    }
-
-    @Override
-    public void onItemClick(final String appKey) {
-
-    }
-
-    @Override
-    public void onNodeReset() {
-
-    }
-
-    private void showProgressbar(){
-        disableClickableViews();
-        mProgressbar.setVisibility(View.VISIBLE);
-    }
-
-    private void hideProgressBar(){
-        mHandler.removeCallbacks(mOperationTimeout);
-        enableClickableViews();
-        mProgressbar.setVisibility(View.INVISIBLE);
-    }
-
-    private final Runnable mOperationTimeout = () -> hideProgressBar();
-
-    private void enableClickableViews(){
-        actionGetCompositionData.setEnabled(true);
-
-    }
-
-    private void disableClickableViews(){
-        actionGetCompositionData.setEnabled(false);
-
-    }
 
     /**
-     * Start activity based on the type of the model
-     *
-     * <p> This way we can seperate the ui logic for different activities</p>
-     *
-     * @param meshNode mesh node
-     * @param element element
-     * @param model model
+     * Returns a String representation of the features
      */
-    public void startActivity(final ProvisionedMeshNode meshNode, final Element element, final MeshModel model) {
-        final Intent intent;
-        if(model instanceof GenericOnOffServerModel) {
-            intent = new Intent(this, GenericOnOffServerActivity.class);
-        } else if (model instanceof GenericLevelServerModel) {
-            intent = new Intent(this, GenericLevelServerActivity.class);
-        } else if (model instanceof VendorModel) {
-            intent = new Intent(this, VendorModelActivity.class);
-        } else {
-            intent = new Intent(this, ModelConfigurationActivity.class);
-        }
+    private String parseFeatures(final Features features){
+        return "Friend feature " + parseFeature(features.isFriendFeatureSupported()) + ", " +
+                "Low power feature " + parseFeature(features.isLowPowerFeatureSupported()) + ", " +
+                "Proxy feature " + parseFeature(features.isProxyFeatureSupported()) + ", " +
+                "Relay feature " + parseFeature(features.isRelayFeatureSupported());
+    }
 
-        intent.putExtra(EXTRA_DEVICE, meshNode);
-        intent.putExtra(EXTRA_ELEMENT_ADDRESS, AddressUtils.getUnicastAddressInt(element.getElementAddress()));
-        intent.putExtra(EXTRA_MODEL_ID, model.getModelId());
-        intent.putExtra(EXTRA_DATA_MODEL_NAME, model.getModelName());
-        startActivity(intent);
+    public String parseFeature(final boolean isSupported){
+        if(isSupported){
+            return "supported";
+        } else {
+            return "unsupported";
+        }
+    }
+
+    @Override
+    public void onElementItemClick(ProvisionedMeshNode meshNode, Element element, MeshModel model) {
+
     }
 }

@@ -23,11 +23,10 @@
 package no.nordicsemi.android.nrfmeshprovisioner.adapter;
 
 import android.content.Context;
-import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.CardView;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,52 +34,32 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import no.nordicsemi.android.meshprovisioner.configuration.MeshModel;
-import no.nordicsemi.android.meshprovisioner.configuration.ProvisionedMeshNode;
-import no.nordicsemi.android.meshprovisioner.models.GenericOnOffServerModel;
+import no.nordicsemi.android.meshprovisioner.transport.MeshModel;
+import no.nordicsemi.android.meshprovisioner.transport.ProvisionedMeshNode;
 import no.nordicsemi.android.meshprovisioner.models.VendorModel;
-import no.nordicsemi.android.meshprovisioner.transport.Element;
-import no.nordicsemi.android.meshprovisioner.utils.AddressUtils;
 import no.nordicsemi.android.meshprovisioner.utils.CompositionDataParser;
-import no.nordicsemi.android.meshprovisioner.utils.Element;
+import no.nordicsemi.android.meshprovisioner.transport.Element;
 import no.nordicsemi.android.meshprovisioner.utils.MeshParserUtils;
-import no.nordicsemi.android.nrfmeshprovisioner.BaseModelConfigurationActivity;
-import no.nordicsemi.android.nrfmeshprovisioner.GenericOnOffServerActivity;
-import no.nordicsemi.android.nrfmeshprovisioner.NodeConfigurationActivity;
-import no.nordicsemi.android.nrfmeshprovisioner.NodeUiActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.R;
-import no.nordicsemi.android.nrfmeshprovisioner.UiOnOffServerActivity;
-import no.nordicsemi.android.nrfmeshprovisioner.livedata.ExtendedMeshNode;
-
-import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_DATA_MODEL_NAME;
-import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_DEVICE;
-import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_ELEMENT_ADDRESS;
-import static no.nordicsemi.android.nrfmeshprovisioner.utils.Utils.EXTRA_MODEL_ID;
-import no.nordicsemi.android.nrfmeshprovisioner.NodeUiActivity;
-import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.ModelConfigurationViewModel;
 
 public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.ViewHolder> {
-
 
 
     private final Context mContext;
     private final List<Element> mElements = new ArrayList<>();
     private final String TAG = ElementUiAdapter.class.getSimpleName();
     private OnItemClickListener mOnItemClickListener;
-    private ProvisionedMeshNode mProvisionedMeshNode;
-    private NodeUiActivity nodeUiActivity;
-    public ModelConfigurationViewModel mViewModel;
-    public List<MeshModel> models;
-    RecyclerView mRecyclerViewElements;
+//    private ProvisionedMeshNode mProvisionedMeshNode;
+//    private NodeUiActivity nodeUiActivity;
+//    public ModelConfigurationViewModel mViewModel;
+//    public List<MeshModel> models;
+//    RecyclerView mRecyclerViewElements;
 
     public int getCpos() {
         return cpos;
@@ -91,19 +70,11 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
     }
 
     protected int cpos;
-    public ElementUiAdapter(RecyclerView mRecyclerViewElements,final NodeUiActivity NodeUiActivity, final ExtendedMeshNode extendedMeshnode,final ModelConfigurationViewModel mViewModel ) {
-        this.mRecyclerViewElements = mRecyclerViewElements;
-        this.mContext = NodeUiActivity.getApplicationContext();
-        nodeUiActivity = NodeUiActivity;
-        this.mViewModel = mViewModel;
-        extendedMeshnode.observe(NodeUiActivity, extendedMeshNode -> {
-            if(extendedMeshNode.getMeshNode() != null) {
-                mProvisionedMeshNode = (ProvisionedMeshNode) extendedMeshnode.getMeshNode();
-                mElements.clear();
-                mElements.addAll(mProvisionedMeshNode.getElements().values());
-                notifyDataSetChanged();
-            }
-        });
+    public ElementUiAdapter(final Context mContext, final ProvisionedMeshNode node) {
+        this.mContext = mContext;
+        if(node != null  && node.getElements() != null) {
+            mElements.addAll(node.getElements().values());
+        }
     }
     public void setOnItemClickListener(final ElementUiAdapter.OnItemClickListener listener) {
         mOnItemClickListener = listener;
@@ -118,14 +89,13 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Element element = mElements.get(position);
-        holder.mElementContainer.setTag(element.getElementAddressInt());
-        final int modelCount = element.getMeshModels().size();
+        holder.mElementContainer.setTag(element);
+        final int modelCount = element.getSigModelCount() + element.getVendorModelCount();
         holder.mElementTitle.setText(mContext.getString(R.string.element_address, MeshParserUtils.bytesToHex(element.getElementAddress(), false)));
         holder.mElementSubtitle.setText(mContext.getString(R.string.model_count, modelCount));
 
-        models = new ArrayList<>(element.getMeshModels().values());
+        final List<MeshModel> models = new ArrayList<>(element.getMeshModels().values());
         inflateModelViews(holder, models);
-
     }
 
 
@@ -134,39 +104,39 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
 
 
 
-        mViewModel.getGenericOnOffState().observe(nodeUiActivity, genericOnOffStatusUpdate -> {
-            //hideProgressBar();
-            final boolean presentState = genericOnOffStatusUpdate.isPresentOnOff();
-            final Boolean targetOnOff = genericOnOffStatusUpdate.getTargetOnOff();
-            final int steps = genericOnOffStatusUpdate.getSteps();
-            final int resolution = genericOnOffStatusUpdate.getResolution();
-            View view = mRecyclerViewElements.findViewHolderForAdapterPosition(getCpos()).itemView;
-            Button mActionOnOff = (Button) view.findViewById(R.id.action_on_off);
-            if (targetOnOff == null) {
-                if (presentState) {
-
-                    //onOffState.setText(R.string.generic_state_on);
-                    //holder.mActionOnOff.getTag();
-                    Log.d(TAG, "getAdapterPosition: "+getCpos());
-
-                    mActionOnOff.setText(R.string.action_generic_off);
-                } else {
-                    //onOffState.setText(R.string.generic_state_off);
-                    mActionOnOff.setText(R.string.action_generic_on);
-                }
-               // remainingTime.setVisibility(View.GONE);
-            } else {
-                if (!targetOnOff) {
-                    //onOffState.setText(R.string.generic_state_on);
-                    mActionOnOff.setText(R.string.action_generic_off);
-                } else {
-                    //onOffState.setText(R.string.generic_state_off);
-                    mActionOnOff.setText(R.string.action_generic_on);
-                }
-                //remainingTime.setText(getString(R.string.remaining_time, MeshParserUtils.getRemainingTransitionTime(resolution, steps)));
-                //remainingTime.setVisibility(View.VISIBLE);
-            }
-        });
+//        mViewModel.getGenericOnOffState().observe(nodeUiActivity, genericOnOffStatusUpdate -> {
+//            //hideProgressBar();
+//            final boolean presentState = genericOnOffStatusUpdate.isPresentOnOff();
+//            final Boolean targetOnOff = genericOnOffStatusUpdate.getTargetOnOff();
+//            final int steps = genericOnOffStatusUpdate.getSteps();
+//            final int resolution = genericOnOffStatusUpdate.getResolution();
+//            View view = mRecyclerViewElements.findViewHolderForAdapterPosition(getCpos()).itemView;
+//            Button mActionOnOff = (Button) view.findViewById(R.id.action_on_off);
+//            if (targetOnOff == null) {
+//                if (presentState) {
+//
+//                    //onOffState.setText(R.string.generic_state_on);
+//                    //holder.mActionOnOff.getTag();
+//                    Log.d(TAG, "getAdapterPosition: "+getCpos());
+//
+//                    mActionOnOff.setText(R.string.action_generic_off);
+//                } else {
+//                    //onOffState.setText(R.string.generic_state_off);
+//                    mActionOnOff.setText(R.string.action_generic_on);
+//                }
+//               // remainingTime.setVisibility(View.GONE);
+//            } else {
+//                if (!targetOnOff) {
+//                    //onOffState.setText(R.string.generic_state_on);
+//                    mActionOnOff.setText(R.string.action_generic_off);
+//                } else {
+//                    //onOffState.setText(R.string.generic_state_off);
+//                    mActionOnOff.setText(R.string.action_generic_on);
+//                }
+//                //remainingTime.setText(getString(R.string.remaining_time, MeshParserUtils.getRemainingTransitionTime(resolution, steps)));
+//                //remainingTime.setVisibility(View.VISIBLE);
+//            }
+//        });
 
 
 
@@ -229,42 +199,42 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
 
         @Override
         public void onClick(final View v) {
-            switch (v.getId()){
-                case R.id.action_on_off:
-                    try {
-                        for(MeshModel model : models) {
-
-                            if(model instanceof GenericOnOffServerModel){
-                                Log.d("inflate", "getElementAddress: " + AddressUtils.getUnicastAddressInt(mElements.get(this.getAdapterPosition()).getElementAddress())+" holder position: "+this.getAdapterPosition()+ "size: "+model.getModelName());
-                         mViewModel.setModel(mProvisionedMeshNode, AddressUtils.getUnicastAddressInt(mElements.get(this.getAdapterPosition()).getElementAddress()),model.getModelId());
-
-
-                        if (mActionOnOff.getText().toString().equals("ON")) {
-                            Log.d(TAG, "getAdapterPosition: "+ this.getAdapterPosition() +" from click" );
-                            setCpos(getAdapterPosition());
-                            mViewModel.sendGenericOnOff(mProvisionedMeshNode, 0, 0, 0, true);
-                          //  mActionOnOff.setText(R.string.action_generic_off);
-                        } else {
-                            setCpos(getAdapterPosition());
-
-                            mViewModel.sendGenericOnOff(mProvisionedMeshNode, 0, 0, 0, false);
-                          //  mActionOnOff.setText(R.string.action_generic_on);
-                        }
-                            }
-                        }
-                        //uiof.progressBar();
-                    } catch (IllegalArgumentException ex) {
-                        Toast.makeText(mContext, ex.getMessage(), Toast.LENGTH_SHORT).show();
-                    }finally {
-
-                    }
-                    break;
-                case R.id.action_read:
-                    final ProvisionedMeshNode node = (ProvisionedMeshNode) mViewModel.getExtendedMeshNode().getMeshNode();
-                    mViewModel.sendGenericOnOffGet(node);
-                default:
-                    break;
-            }
+//            switch (v.getId()){
+//                case R.id.action_on_off:
+//                    try {
+//                        for(MeshModel model : models) {
+//
+//                            if(model instanceof GenericOnOffServerModel){
+//                                Log.d("inflate", "getElementAddress: " + AddressUtils.getUnicastAddressInt(mElements.get(this.getAdapterPosition()).getElementAddress())+" holder position: "+this.getAdapterPosition()+ "size: "+model.getModelName());
+//                         mViewModel.setModel(mProvisionedMeshNode, AddressUtils.getUnicastAddressInt(mElements.get(this.getAdapterPosition()).getElementAddress()),model.getModelId());
+//
+//
+//                        if (mActionOnOff.getText().toString().equals("ON")) {
+//                            Log.d(TAG, "getAdapterPosition: "+ this.getAdapterPosition() +" from click" );
+//                            setCpos(getAdapterPosition());
+//                            mViewModel.sendGenericOnOff(mProvisionedMeshNode, 0, 0, 0, true);
+//                          //  mActionOnOff.setText(R.string.action_generic_off);
+//                        } else {
+//                            setCpos(getAdapterPosition());
+//
+//                            mViewModel.sendGenericOnOff(mProvisionedMeshNode, 0, 0, 0, false);
+//                          //  mActionOnOff.setText(R.string.action_generic_on);
+//                        }
+//                            }
+//                        }
+//                        //uiof.progressBar();
+//                    } catch (IllegalArgumentException ex) {
+//                        Toast.makeText(mContext, ex.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }finally {
+//
+//                    }
+//                    break;
+//                case R.id.action_read:
+//                    final ProvisionedMeshNode node = mViewModel.getSelectedMeshNode().getMeshNode();
+//                    mViewModel.sendGenericOnOffGet(node);
+//                default:
+//                    break;
+//            }
 
         }
     }

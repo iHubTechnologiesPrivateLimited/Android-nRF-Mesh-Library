@@ -22,7 +22,6 @@
 
 <resources>
 
-<<<<<<< HEAD
     <style name="Widget" />
 
     <style name="Widget.ScannerSubtitle">
@@ -30,8 +29,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-=======
->>>>>>> upstream/master
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="AppTheme.Base">
         <!-- Customize your theme here. -->
@@ -64,7 +62,7 @@
         <item name="materialButtonStyle">@style/Widget.MaterialComponents.Button.TextButton.Dialog</item>
     </style>
 
-    <style name="Widget"/>
+
 
     <style name="Widget.InfoWarningTitles">
         <item name="android:textColor">?android:textColorSecondary</item>

@@ -119,25 +119,12 @@ public abstract class BaseModelConfigurationActivity extends AppCompatActivity i
     ProgressBar mProgressbar;
 
     protected Handler mHandler;
-
-
-
     protected ModelConfigurationViewModel mViewModel;
     protected List<byte[]> mGroupAddress = new ArrayList<>();
     protected List<Integer> mKeyIndexes = new ArrayList<>();
     protected AddressAdapter mAddressAdapter;
     protected BoundAppKeysAdapter mBoundAppKeyAdapter;
-
-    public void setmActionRead(Button mActionRead) {
-        this.mActionRead = mActionRead;
-    }
-
-    public Button getmActionRead() {
-        return mActionRead;
-    }
-
     protected Button mActionRead;
-
     private RecyclerView recyclerViewBoundKeys, recyclerViewAddresses;
 
     @Override
@@ -228,10 +215,15 @@ public abstract class BaseModelConfigurationActivity extends AppCompatActivity i
                 handler.post(new Runnable() {
                     public void run() {
                         if (mKeyIndexes.size() == 0) {
+
+
                             final Intent bindAppKeysIntent = new Intent(BaseModelConfigurationActivity.this, BindAppKeysActivity.class);
-                            final ProvisionedMeshNode node = ((ProvisionedMeshNode)mViewModel.getExtendedMeshNode().getMeshNode());
-                            bindAppKeysIntent.putExtra(ManageAppKeysActivity.APP_KEYS, (Serializable) node.getAddedAppKeys());
+                            final ProvisionedMeshNode node = mViewModel.getSelectedMeshNode().getMeshNode();
+                            bindAppKeysIntent.putExtra(ManageAppKeysActivity.APP_KEYS, (Serializable) node.getAddedApplicationKeys());
                             startActivityForResult(bindAppKeysIntent, ManageAppKeysActivity.SELECT_APP_KEY);
+
+
+
 
                             // Toast.makeText(getApplicationContext(), "Binded app key", Toast.LENGTH_SHORT).show();
                         }
@@ -246,9 +238,8 @@ public abstract class BaseModelConfigurationActivity extends AppCompatActivity i
         //        ihub edits end0
 
 
-
         mViewModel.getMeshMessageLiveData().observe(this, this::updateMeshMessage);
-
+    }
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {

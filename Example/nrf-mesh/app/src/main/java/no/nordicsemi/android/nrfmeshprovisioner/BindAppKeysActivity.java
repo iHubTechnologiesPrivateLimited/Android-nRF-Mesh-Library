@@ -32,6 +32,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -51,7 +52,7 @@ public class BindAppKeysActivity extends AppCompatActivity implements BindAppKey
     public static final String RESULT_APP_KEY = "RESULT_APP_KEY";
     public static final String RESULT_APP_KEY_INDEX = "RESULT_APP_KEY_INDEX";
     public static final String APP_KEYS = "APP_KEYS";
-
+    private final static String TAG = BindAppKeysActivity.class.getSimpleName();
     //UI Bindings
     @BindView(android.R.id.empty)
     View mEmptyView;
@@ -89,8 +90,8 @@ public class BindAppKeysActivity extends AppCompatActivity implements BindAppKey
 
 //        ihub edits start
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(RESULT_APP_KEY_INDEX, 0);
-        returnIntent.putExtra(RESULT_APP_KEY, mAppKeysMap.get(0));
+        Log.d(TAG, "onCreate: "+tempAppKeys.get(0));
+        returnIntent.putExtra(RESULT_APP_KEY, tempAppKeys.get(0));
         setResult(Activity.RESULT_OK, returnIntent);
        // Toast.makeText(getApplicationContext(),"In app keys",Toast.LENGTH_SHORT).show();
         finish();
@@ -126,6 +127,7 @@ public class BindAppKeysActivity extends AppCompatActivity implements BindAppKey
         for (Map.Entry<Integer, ApplicationKey> appKeyEntry : tempAppKeys.entrySet()) {
             final ApplicationKey applicationKey = appKeyEntry.getValue();
             applicationKeys.add(applicationKey);
+           // mAppKeysMap.add(applicationKey);
         }
         return applicationKeys;
     }

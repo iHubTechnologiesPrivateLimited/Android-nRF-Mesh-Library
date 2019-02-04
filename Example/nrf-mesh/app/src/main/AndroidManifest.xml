@@ -104,9 +104,6 @@
             android:name=".GenericLevelServerActivity"
             android:launchMode="singleTop" />
         <activity
-            android:name=".UiOnOffServerActivity"
-            android:launchMode="singleTop" />
-        <activity
             android:name=".GenericOnOffServerActivity"
             android:launchMode="singleTop" />
         <activity
@@ -115,11 +112,6 @@
         <activity
             android:name=".ModelConfigurationActivity"
             android:launchMode="singleTop" />
-
-        <service
-            android:name=".service.MeshService"
-            android:exported="false" />
-
 
         <activity
             android:name=".Ui"
