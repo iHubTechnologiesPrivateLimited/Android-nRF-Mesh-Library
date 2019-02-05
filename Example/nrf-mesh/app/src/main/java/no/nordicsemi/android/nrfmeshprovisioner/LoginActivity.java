@@ -24,7 +24,7 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
-    private static final String URL_FOR_LOGIN = "http://192.168.1.102:5000/userlogin/";
+    private static final String URL_FOR_LOGIN = "http://144.76.40.143:5000/userlogin/";
     ProgressDialog progressDialog;
     private EditText loginInputEmail, loginInputPassword;
     private Button btnlogin;

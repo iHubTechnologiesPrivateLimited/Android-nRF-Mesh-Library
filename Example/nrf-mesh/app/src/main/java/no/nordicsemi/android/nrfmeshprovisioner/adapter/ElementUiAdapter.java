@@ -46,21 +46,33 @@ import no.nordicsemi.android.meshprovisioner.models.VendorModel;
 import no.nordicsemi.android.meshprovisioner.utils.CompositionDataParser;
 import no.nordicsemi.android.meshprovisioner.transport.Element;
 import no.nordicsemi.android.meshprovisioner.utils.MeshParserUtils;
+import no.nordicsemi.android.nrfmeshprovisioner.NodeConfigurationActivity;
+import no.nordicsemi.android.nrfmeshprovisioner.NodeUiActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.R;
-
+import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.ExtendedMeshNode;
+// ihub class
+// this class is eqvivalent to ElementAdapter
+// we set all the elements in here to display in single screen, instead of multiple pages
 public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.ViewHolder> {
 
 
     private final Context mContext;
     private final List<Element> mElements = new ArrayList<>();
-    private final String TAG = ElementUiAdapter.class.getSimpleName();
-    private OnItemClickListener mOnItemClickListener;
-//    private ProvisionedMeshNode mProvisionedMeshNode;
-//    private NodeUiActivity nodeUiActivity;
-//    public ModelConfigurationViewModel mViewModel;
-//    public List<MeshModel> models;
-//    RecyclerView mRecyclerViewElements;
+    private final String TAG = ElementAdapter.class.getSimpleName();
+    private ElementUiAdapter.OnItemClickListener mOnItemClickListener;
+    private ProvisionedMeshNode mProvisionedMeshNode;
 
+    public ElementUiAdapter(RecyclerView mRecyclerViewElements, final NodeUiActivity NodeUiActivity, final ExtendedMeshNode extendedMeshnode) {
+        this.mContext = NodeUiActivity.getApplicationContext();
+        extendedMeshnode.observe(NodeUiActivity, meshNode -> {
+            if (meshNode != null) {
+                mProvisionedMeshNode = meshNode;
+                mElements.clear();
+                mElements.addAll(mProvisionedMeshNode.getElements().values());
+                notifyDataSetChanged();
+            }
+        });
+    }
     public int getCpos() {
         return cpos;
     }
@@ -70,12 +82,7 @@ public class ElementUiAdapter extends RecyclerView.Adapter<ElementUiAdapter.View
     }
 
     protected int cpos;
-    public ElementUiAdapter(final Context mContext, final ProvisionedMeshNode node) {
-        this.mContext = mContext;
-        if(node != null  && node.getElements() != null) {
-            mElements.addAll(node.getElements().values());
-        }
-    }
+
     public void setOnItemClickListener(final ElementUiAdapter.OnItemClickListener listener) {
         mOnItemClickListener = listener;
     }

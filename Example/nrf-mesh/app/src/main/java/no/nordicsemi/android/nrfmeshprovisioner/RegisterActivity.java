@@ -23,7 +23,7 @@ import java.util.Map;
 public class RegisterActivity extends AppCompatActivity {
 
     private static final String TAG = "RegisterActivity";
-    private static final String URL_FOR_REGISTRATION = "http://192.168.1.106:5000/add";
+    private static final String URL_FOR_REGISTRATION = "http://144.76.40.143:5000/add";
     ProgressDialog progressDialog;
 
     private EditText signupInputName, signupInputEmail, signupInputPassword, signupInputPhone;
