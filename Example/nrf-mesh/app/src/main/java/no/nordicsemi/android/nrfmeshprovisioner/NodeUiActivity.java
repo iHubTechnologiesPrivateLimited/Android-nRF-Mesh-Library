@@ -162,7 +162,7 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mesh_node_configuration);
+        setContentView(R.layout.activity_mesh_node_ui);
         ButterKnife.bind(this);
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(NodeConfigurationViewModel.class);
 
