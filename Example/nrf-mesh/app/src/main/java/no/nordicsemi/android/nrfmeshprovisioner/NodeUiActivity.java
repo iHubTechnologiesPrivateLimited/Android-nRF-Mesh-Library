@@ -146,8 +146,8 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
     RecyclerView mRecyclerViewElements;
     @BindView(R.id.composition_data_card)
     CardView mCompositionDataCard;
-    @BindView(R.id.proxy_filter_card)
-    CardView mProxyFilterCard;
+//    @BindView(R.id.proxy_filter_card)
+//    CardView mProxyFilterCard;
     @BindView(R.id.configuration_progress_bar)
     ProgressBar mProgressbar;
 
@@ -183,11 +183,11 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(R.string.title_node_configuration);
+        getSupportActionBar().setTitle(R.string.title_switch_board);
         getSupportActionBar().setSubtitle(mViewModel.getSelectedMeshNode().getMeshNode().getNodeName());
 
         final TextView noElementsFound = findViewById(R.id.no_elements);
-        final TextView noAppKeysFound = findViewById(R.id.no_app_keys);
+        //final TextView noAppKeysFound = findViewById(R.id.no_app_keys);
         final View compositionActionContainer = findViewById(R.id.composition_action_container);
         mRecyclerViewElements.setLayoutManager(new LinearLayoutManager(this));
         final ElementUiAdapter adapter = new ElementUiAdapter(mRecyclerViewElements,this, mViewModel.getSelectedMeshNode());
@@ -201,58 +201,58 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
 //        final AddedAppKeyAdapter appKeyAdapter = new AddedAppKeyAdapter(this, mViewModel.getSelectedMeshNode());
 //        recyclerViewAppKeys.setAdapter(appKeyAdapter);
 
-        final TextView noAddressesAdded = findViewById(R.id.no_addresses);
-        final RecyclerView recyclerViewAddresses = findViewById(R.id.recycler_view_addresses);
-
-        final Integer unicast = mViewModel.getConnectedMeshNodeAddress().getValue();
-        if (unicast != null && unicast == mViewModel.getSelectedMeshNode().getMeshNode().getUnicastAddressInt()) {
-            mProxyFilterCard.setVisibility(View.VISIBLE);
-            recyclerViewAddresses.setLayoutManager(new LinearLayoutManager(this));
-            recyclerViewAddresses.setItemAnimator(new DefaultItemAnimator());
-            final ItemTouchHelper.Callback itemTouchHelperCallback = new RemovableItemTouchHelperCallback(this);
-            final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelperCallback);
-            itemTouchHelper.attachToRecyclerView(recyclerViewAddresses);
-            final FilterAddressAdapter addressAdapter = new FilterAddressAdapter(this, mViewModel.getSelectedMeshNode());
-            recyclerViewAddresses.setAdapter(addressAdapter);
-        }
-
-//        mViewModel.getSelectedMeshNode().observe(this, meshNode -> {
-//            if (meshNode == null) {
-//                finish();
-//                return;
-//            }
+//        final TextView noAddressesAdded = findViewById(R.id.no_addresses);
+//        final RecyclerView recyclerViewAddresses = findViewById(R.id.recycler_view_addresses);
 //
-//            if (!meshNode.getElements().isEmpty()) {
-//                compositionActionContainer.setVisibility(View.GONE);
-//                noElementsFound.setVisibility(View.INVISIBLE);
-//                mRecyclerViewElements.setVisibility(View.VISIBLE);
-//            } else {
-//                noElementsFound.setVisibility(View.VISIBLE);
-//                compositionActionContainer.setVisibility(View.VISIBLE);
-//                mRecyclerViewElements.setVisibility(View.INVISIBLE);
-//            }
-//
-//            if (!meshNode.getAddedApplicationKeys().isEmpty()) {
-//                noAppKeysFound.setVisibility(View.GONE);
-//                recyclerViewAppKeys.setVisibility(View.VISIBLE);
-//            } else {
-//                noAppKeysFound.setVisibility(View.VISIBLE);
-//                recyclerViewAppKeys.setVisibility(View.GONE);
-//            }
-//            final ProxyFilter filter = meshNode.getProxyFilter();
-//            if (filter != null) {
-//                actionSwitchFilter.setChecked(filter.getFilterType().getType() == ProxyFilterType.WHITE_LIST_FILTER);
-//                if (!filter.getAddresses().isEmpty()) {
-//                    noAddressesAdded.setVisibility(View.GONE);
-//                    recyclerViewAddresses.setVisibility(View.VISIBLE);
-//                    actionClearFilterAddress.setVisibility(View.VISIBLE);
-//                } else {
-//                    noAddressesAdded.setVisibility(View.VISIBLE);
-//                    recyclerViewAddresses.setVisibility(View.GONE);
-//                    actionClearFilterAddress.setVisibility(View.GONE);
-//                }
-//            }
-//        });
+//        final Integer unicast = mViewModel.getConnectedMeshNodeAddress().getValue();
+//        if (unicast != null && unicast == mViewModel.getSelectedMeshNode().getMeshNode().getUnicastAddressInt()) {
+//            //mProxyFilterCard.setVisibility(View.VISIBLE);
+//            recyclerViewAddresses.setLayoutManager(new LinearLayoutManager(this));
+//            recyclerViewAddresses.setItemAnimator(new DefaultItemAnimator());
+//            final ItemTouchHelper.Callback itemTouchHelperCallback = new RemovableItemTouchHelperCallback(this);
+//            final ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelperCallback);
+//            itemTouchHelper.attachToRecyclerView(recyclerViewAddresses);
+//            final FilterAddressAdapter addressAdapter = new FilterAddressAdapter(this, mViewModel.getSelectedMeshNode());
+//            recyclerViewAddresses.setAdapter(addressAdapter);
+//        }
+
+        mViewModel.getSelectedMeshNode().observe(this, meshNode -> {
+            if (meshNode == null) {
+                finish();
+                return;
+            }
+
+            if (!meshNode.getElements().isEmpty()) {
+                compositionActionContainer.setVisibility(View.GONE);
+                noElementsFound.setVisibility(View.INVISIBLE);
+                mRecyclerViewElements.setVisibility(View.VISIBLE);
+            } else {
+                noElementsFound.setVisibility(View.VISIBLE);
+                compositionActionContainer.setVisibility(View.VISIBLE);
+                mRecyclerViewElements.setVisibility(View.INVISIBLE);
+            }
+
+            if (!meshNode.getAddedApplicationKeys().isEmpty()) {
+               // noAppKeysFound.setVisibility(View.GONE);
+          //      recyclerViewAppKeys.setVisibility(View.VISIBLE);
+            } else {
+                //noAppKeysFound.setVisibility(View.VISIBLE);
+            //    recyclerViewAppKeys.setVisibility(View.GONE);
+            }
+            final ProxyFilter filter = meshNode.getProxyFilter();
+            if (filter != null) {
+               // actionSwitchFilter.setChecked(filter.getFilterType().getType() == ProxyFilterType.WHITE_LIST_FILTER);
+                if (!filter.getAddresses().isEmpty()) {
+              //      noAddressesAdded.setVisibility(View.GONE);
+                //    recyclerViewAddresses.setVisibility(View.VISIBLE);
+                 //   actionClearFilterAddress.setVisibility(View.VISIBLE);
+                } else {
+                  //  noAddressesAdded.setVisibility(View.VISIBLE);
+                    //recyclerViewAddresses.setVisibility(View.GONE);
+                   // actionClearFilterAddress.setVisibility(View.GONE);
+                }
+            }
+        });
 
         actionGetCompositionData.setOnClickListener(v -> {
             showProgressbar();
@@ -335,7 +335,7 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
 
         mViewModel.getMeshMessageLiveData().observe(this, this::updateMeshMessage);
 
-       // updateProxySettingsCardUi();
+        updateProxySettingsCardUi();
     }
 
     @Override
@@ -433,23 +433,23 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
         }
     }
 
-//    private void updateProxySettingsCardUi() {
-//        final ProvisionedMeshNode meshNode = mViewModel.getSelectedMeshNode().getMeshNode();
-//        if (meshNode.getNodeFeatures() != null && meshNode.getNodeFeatures().isProxyFeatureSupported()) {
-//            mProxyStateCard.setVisibility(View.VISIBLE);
-//            updateProxySettingsButtonUi();
-//        }
-//    }
-//
-//    private void updateProxySettingsButtonUi() {
-//        if (mProxyState) {
-//            mProxyStateRationaleSummary.setText(R.string.proxy_set_off_rationale);
-//            actionSetProxyState.setText(R.string.action_proxy_state_set_off);
-//        } else {
-//            mProxyStateRationaleSummary.setText(R.string.proxy_set_on_rationale);
-//            actionSetProxyState.setText(R.string.action_proxy_state_set_on);
-//        }
-//    }
+    private void updateProxySettingsCardUi() {
+        final ProvisionedMeshNode meshNode = mViewModel.getSelectedMeshNode().getMeshNode();
+        if (meshNode.getNodeFeatures() != null && meshNode.getNodeFeatures().isProxyFeatureSupported()) {
+ //           mProxyStateCard.setVisibility(View.VISIBLE);
+            updateProxySettingsButtonUi();
+        }
+    }
+
+    private void updateProxySettingsButtonUi() {
+        if (mProxyState) {
+     //       mProxyStateRationaleSummary.setText(R.string.proxy_set_off_rationale);
+   //         actionSetProxyState.setText(R.string.action_proxy_state_set_off);
+        } else {
+       //     mProxyStateRationaleSummary.setText(R.string.proxy_set_on_rationale);
+         //   actionSetProxyState.setText(R.string.action_proxy_state_set_on);
+        }
+    }
 
     private void showProgressbar() {
         disableClickableViews();
@@ -528,7 +528,7 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
         } else if (meshMessage instanceof ConfigProxyStatus) {
             final ConfigProxyStatus status = (ConfigProxyStatus) meshMessage;
             mProxyState = status.isProxyFeatureEnabled();
-            //updateProxySettingsCardUi();
+            updateProxySettingsCardUi();
             hideProgressBar();
         }
     }

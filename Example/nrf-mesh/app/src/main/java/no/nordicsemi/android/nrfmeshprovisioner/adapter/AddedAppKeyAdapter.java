@@ -38,6 +38,7 @@ import butterknife.ButterKnife;
 import no.nordicsemi.android.meshprovisioner.transport.ApplicationKey;
 import no.nordicsemi.android.meshprovisioner.utils.MeshParserUtils;
 import no.nordicsemi.android.nrfmeshprovisioner.NodeConfigurationActivity;
+import no.nordicsemi.android.nrfmeshprovisioner.NodeUiActivity;
 import no.nordicsemi.android.nrfmeshprovisioner.R;
 import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.ExtendedMeshNode;
 import no.nordicsemi.android.nrfmeshprovisioner.widgets.RemovableViewHolder;
@@ -58,6 +59,24 @@ public class AddedAppKeyAdapter extends RecyclerView.Adapter<AddedAppKeyAdapter.
             }
         });
     }
+
+    //ihub edits start
+    // this is being called from NodeUiActivity
+    public AddedAppKeyAdapter(final NodeUiActivity activity, final ExtendedMeshNode extendedMeshNode) {
+        this.mContext = activity.getApplicationContext();
+        extendedMeshNode.observe(activity, extendedNode -> {
+            if (extendedNode != null) {
+                appKeys.clear();
+                appKeys.addAll(extendedNode.getAddedApplicationKeys().values());
+                notifyDataSetChanged();
+            }
+        });
+    }
+    //ihub edits end
+
+
+
+
 
     public void setOnItemClickListener(final AddedAppKeyAdapter.OnItemClickListener listener) {
         mOnItemClickListener = listener;

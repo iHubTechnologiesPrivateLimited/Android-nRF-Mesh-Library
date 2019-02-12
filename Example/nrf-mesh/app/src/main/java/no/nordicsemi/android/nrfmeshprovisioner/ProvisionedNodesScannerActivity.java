@@ -132,7 +132,7 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 				//stopScan();
 				// sleep is needed due to wait time for observer to observe the live data and puting it in to an onject
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					Log.d("getscanner", "onCreate: "+e.getMessage());
 				}
@@ -143,7 +143,7 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 					startActivityForResult(meshProvisionerIntent, ReconnectActivity.REQUEST_DEVICE_READY);
 					// sleep is needed due to wait time for observer to observe the live data and puting it in to an onject
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						Log.d("getscanner", "onCreate: "+e.getMessage());
 					}
