@@ -118,30 +118,35 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 		});*/
 
 
-		mViewModel.getScannerState().observe(this, ScannerLiveData-> {
+
+
+		//ihub edits
+		// this function observes reconnect mScannerLiveData object in ProvisionedNodesScannerRepository.java
+		mViewModel.getScannerState().observe(this, scannerLiveDatatemp-> {
 			//Toast.makeText(this, " Found observe ", Toast.LENGTH_SHORT).show();
-
-			if(ScannerLiveData.getDevices().size()>0){
-				//Toast.makeText(this," mSharedViewModel "+ , Toast.LENGTH_SHORT).show();
-				//Toast.makeText(this, " Found devices "+ScannerLiveData.getDevices().get(0).getDevice().getName(), Toast.LENGTH_SHORT).show();
-				stopScan();
-				for(ExtendedBluetoothDevice device: ScannerLiveData.getDevices()){
-					//Toast.makeText(getApplicationContext(), " Found device ", Toast.LENGTH_SHORT).show();
-					final Handler handler = new Handler();
-					Timer t = new Timer();
-					t.schedule(new TimerTask() {
-						public void run() {
-							handler.post(new Runnable() {
-								public void run() {
-									Log.d("connectAuto", "ScannerLiveData");
-
-									final Intent meshProvisionerIntent = new Intent(getApplicationContext(), ReconnectActivity.class);
-									meshProvisionerIntent.putExtra(Utils.EXTRA_DEVICE, device);
-									startActivityForResult(meshProvisionerIntent, ReconnectActivity.REQUEST_DEVICE_READY);
-								}
-							});
-						}
-					},100);
+			Log.d("getscanner", "observe: ");
+			// checking if got any device
+			if(scannerLiveDatatemp.getDevices().size()>0){
+				Log.d("getscanner", "mSharedViewModel "+ scannerLiveDatatemp.getDevices().size());
+				Log.d("getscanner"," Found devices "+scannerLiveDatatemp.getDevices().get(0).getDevice().getName()+" size: "+scannerLiveDatatemp.getDevices().size());
+				//stopScan();
+				// sleep is needed due to wait time for observer to observe the live data and puting it in to an onject
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					Log.d("getscanner", "onCreate: "+e.getMessage());
+				}
+				// iterating on all devices found, this is usefull when there are multiple nodes nearby
+				for(ExtendedBluetoothDevice device: scannerLiveDatatemp.getDevices()){
+					final Intent meshProvisionerIntent = new Intent(this, ReconnectActivity.class);
+					meshProvisionerIntent.putExtra(Utils.EXTRA_DEVICE, device);
+					startActivityForResult(meshProvisionerIntent, ReconnectActivity.REQUEST_DEVICE_READY);
+					// sleep is needed due to wait time for observer to observe the live data and puting it in to an onject
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						Log.d("getscanner", "onCreate: "+e.getMessage());
+					}
 
 				}
 
@@ -153,7 +158,10 @@ public class ProvisionedNodesScannerActivity extends AppCompatActivity implement
 		});
 
 
+
 	}
+
+	//ihub edits
 
 	@Override
 	protected void onStop() {
