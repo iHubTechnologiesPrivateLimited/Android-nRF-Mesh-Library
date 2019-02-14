@@ -83,7 +83,7 @@ public class ModelConfigurationViewModel extends ViewModel {
      *
      * @return {@link ExtendedElement} element
      */
-    public ExtendedElement getSelectedElement() {
+    public ExtendedElement  getSelectedElement() {
         return mNrfMeshRepository.getSelectedElement();
     }
 

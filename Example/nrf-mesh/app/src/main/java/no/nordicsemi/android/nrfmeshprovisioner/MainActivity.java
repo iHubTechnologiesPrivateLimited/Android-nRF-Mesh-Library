@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements Injectable, HasSu
         mBottomNavigationView.setOnNavigationItemReselectedListener(this);
 
         if (savedInstanceState == null) {
-            onNavigationItemSelected(mBottomNavigationView.getMenu().findItem(R.id.action_network));
+            onNavigationItemSelected(mBottomNavigationView.getMenu().findItem(R.id.action_ui));
         } else {
             mBottomNavigationView.setSelectedItemId(savedInstanceState.getInt(CURRENT_FRAGMENT));
         }

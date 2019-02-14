@@ -71,6 +71,7 @@ import no.nordicsemi.android.meshprovisioner.transport.ConfigProxyGet;
 import no.nordicsemi.android.meshprovisioner.transport.ConfigProxySet;
 import no.nordicsemi.android.meshprovisioner.transport.ConfigProxyStatus;
 import no.nordicsemi.android.meshprovisioner.transport.Element;
+import no.nordicsemi.android.meshprovisioner.transport.GenericOnOffSet;
 import no.nordicsemi.android.meshprovisioner.transport.MeshMessage;
 import no.nordicsemi.android.meshprovisioner.transport.MeshModel;
 import no.nordicsemi.android.meshprovisioner.transport.NetworkKey;
@@ -96,6 +97,7 @@ import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentProxySet;
 import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentResetNode;
 import no.nordicsemi.android.nrfmeshprovisioner.dialog.DialogFragmentTransactionStatus;
 import no.nordicsemi.android.nrfmeshprovisioner.utils.Utils;
+import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.ModelConfigurationViewModel;
 import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.NodeConfigurationViewModel;
 import no.nordicsemi.android.nrfmeshprovisioner.widgets.ItemTouchHelperAdapter;
 import no.nordicsemi.android.nrfmeshprovisioner.widgets.RemovableItemTouchHelperCallback;
@@ -155,7 +157,7 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
     private Handler mHandler;
     private boolean mProxyState;
     private boolean mRequestedState = true;
-
+    protected ModelConfigurationViewModel mModelViewModel;
 
     private final Runnable mOperationTimeout = this::hideProgressBar;
 
@@ -165,7 +167,7 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
         setContentView(R.layout.activity_mesh_node_ui);
         ButterKnife.bind(this);
         mViewModel = ViewModelProviders.of(this, mViewModelFactory).get(NodeConfigurationViewModel.class);
-
+        mModelViewModel = ViewModelProviders.of(this, mViewModelFactory).get(ModelConfigurationViewModel.class);
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(PROGRESS_BAR_STATE)) {
                 mProgressbar.setVisibility(View.VISIBLE);
@@ -190,7 +192,7 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
         //final TextView noAppKeysFound = findViewById(R.id.no_app_keys);
         final View compositionActionContainer = findViewById(R.id.composition_action_container);
         mRecyclerViewElements.setLayoutManager(new LinearLayoutManager(this));
-        final ElementUiAdapter adapter = new ElementUiAdapter(mRecyclerViewElements,this, mViewModel.getSelectedMeshNode());
+        final ElementUiAdapter adapter = new ElementUiAdapter(mRecyclerViewElements,this, mViewModel ,mModelViewModel);
         adapter.setHasStableIds(true);
         adapter.setOnItemClickListener(this);
         mRecyclerViewElements.setAdapter(adapter);
@@ -262,7 +264,8 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
         });
 
 //        actionAddAppkey.setOnClickListener(v -> {
-//            final List<ApplicationKey> appKeys = mViewModel.getMeshManagerApi().getMeshNetwork().getAppKeys();
+//            final List<ApplicationKey> appKeys
+// = mViewModel.getMeshManagerApi().getMeshNetwork().getAppKeys();
 //            final Intent addAppKeys = new Intent(NodeUiActivity.this, ManageNodeAppKeysActivity.class);
 //            addAppKeys.putExtra(ManageAppKeysActivity.APP_KEYS, new ArrayList<>(appKeys));
 //            startActivityForResult(addAppKeys, ManageAppKeysActivity.SELECT_APP_KEY);
@@ -506,8 +509,8 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
         }
         startActivity(intent);
     }
-
-    private void updateMeshMessage(final MeshMessage meshMessage) {
+// changed access from private to public to access this function in ElementUiAdapter
+    public void updateMeshMessage(final MeshMessage meshMessage) {
         if (meshMessage instanceof ProxyConfigFilterStatus) {
             hideProgressBar();
         }
@@ -562,4 +565,19 @@ public class NodeUiActivity extends AppCompatActivity implements Injectable, Ele
         final ProxyConfigSetFilterType setFilterType = new ProxyConfigSetFilterType(filterType);
         mViewModel.getMeshManagerApi().sendMeshMessage(new byte[]{0x00, 0x00}, setFilterType);
     }
+
+
+    /**
+     * Send generic on off set to mesh node
+     *
+     * @param state true to turn on and false to turn off
+     * @param delay message execution delay in 5ms steps. After this delay milliseconds the model will execute the required behaviour.
+     */
+//    public void sendGenericOnOff(final boolean state, final Integer delay) {
+//        final ProvisionedMeshNode node = mViewModel.getSelectedMeshNode().getMeshNode();
+//        final Element element = mModelViewModel.getSelectedElement().getElement();
+//        final MeshModel model = mModelViewModel.getSelectedModel().getMeshModel();
+//
+//    }
+
 }

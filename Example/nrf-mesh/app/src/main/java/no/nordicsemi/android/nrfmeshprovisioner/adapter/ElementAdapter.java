@@ -68,7 +68,7 @@ public class ElementAdapter extends RecyclerView.Adapter<ElementAdapter.ViewHold
             }
         });
     }
-
+    // this is being called from a class, to support constructor wrote it.
     public ElementAdapter(final NodeUiActivity NodeUiActivity, final ExtendedMeshNode extendedMeshnode) {
         this.mContext = NodeUiActivity.getApplicationContext();
         extendedMeshnode.observe(NodeUiActivity, extendedMeshNode -> {
