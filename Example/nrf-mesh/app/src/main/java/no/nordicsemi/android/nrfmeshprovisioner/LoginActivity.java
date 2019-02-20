@@ -10,15 +10,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.content.Intent;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
+
+import butterknife.BindView;
+import butterknife.OnClick;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -29,7 +34,13 @@ public class LoginActivity extends AppCompatActivity {
     private EditText loginInputEmail, loginInputPassword;
     private Button btnlogin;
     private Button btnLinkSignup;
+    @BindView(R.id.id_button_forgot)
+    TextView idButtonForgot;
+    @BindView(R.id.btn_get_password)
+    Button btnGetPassword;
     SharedPreferences sharedpreferences;
+    private static final String URL_GET_PWD = "actial url";
+    private boolean hider = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +72,33 @@ public class LoginActivity extends AppCompatActivity {
                 Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
                 startActivity(i);
             }
+        });
+
+        // by madhu, on click for get the otp button and server call
+        //start
+        btnGetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (loginInputEmail.getText().toString().isEmpty()) {
+                    loginInputEmail.setError("Enter Email");
+                } else {
+                    getPassword(loginInputEmail.getText().toString());
+                }
+            }
+        });
+    }
+    private void getPassword(String s) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, URL_GET_PWD, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+
         });
     }
 
@@ -160,7 +198,31 @@ public class LoginActivity extends AppCompatActivity {
         if (progressDialog.isShowing())
             progressDialog.dismiss();
     }
+    //by madhu, enable and disable oparetion for forgot password
+    //start
+    @OnClick(R.id.id_button_forgot)
+    public void onViewClicked() {
+        if (hider) {
 
+            loginInputPassword.setVisibility(View.GONE);
+            btnlogin.setVisibility(View.GONE);
+            btnLinkSignup.setVisibility(View.INVISIBLE);
+            btnGetPassword.setVisibility(View.VISIBLE);
+            idButtonForgot.setText("Cancle!");
+            hider = false;
+        } else {
+
+            loginInputPassword.setVisibility(View.VISIBLE);
+            btnlogin.setVisibility(View.VISIBLE);
+            btnLinkSignup.setVisibility(View.VISIBLE);
+            btnGetPassword.setVisibility(View.GONE);
+            idButtonForgot.setText("Forgot Password?");
+
+            hider = true;
+        }
+
+    }
+    //end
 }
 
 

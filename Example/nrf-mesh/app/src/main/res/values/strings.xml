@@ -532,4 +532,14 @@
         Step 4. Add app key</string>
     <string name="network_transmit_interval_steps_summary">10 ms step(s)</string>
 
+    <!-- ihub madhu added strings....... start -->
+
+
+    <string name="btn_get_pwd">Get Password</string>
+
+    <string name="forgot">Forgot password?</string>
+
+    <!-- end -->
+
+
 </resources>

@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements Injectable, HasSu
 
 
         mUiFragment = (UiFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_ui);
-
         mNetworkFragment = (NetworkFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_network);
         mScannerFragment = (ScannerFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_scanner);
         mSettingsFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_settings);

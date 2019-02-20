@@ -26,7 +26,9 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -111,6 +113,9 @@ DialogFragmentPermissionRationale.StoragePermissionListener {
 
 
     private NodeAdapter mAdapter;
+
+    SharedPreferences sharedpreferences;
+    private Context mContext;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -239,12 +244,19 @@ DialogFragmentPermissionRationale.StoragePermissionListener {
         switchCompat = (SwitchCompat) rootView.findViewById(R.id.ui_settings_card);
 
         switchCompat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // by madhu, store boolean in shared prefarence
+                sharedpreferences =  mContext.getSharedPreferences("profilepref", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+
                 if (isChecked) {
                     Log.d("UI", "true");
+                    editor.putBoolean("switchComponent",true);
                 } else {
                     Log.d("UI", "false");
+                    editor.putBoolean("switchComponent",false);
                 }
             }
         });
@@ -492,5 +504,10 @@ DialogFragmentPermissionRationale.StoragePermissionListener {
             }
             mViewModel.getMeshManagerApi().exportMeshNetwork(EXPORT_PATH);
         }
+    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
     }
 }
