@@ -74,6 +74,7 @@
         android:layout_gravity="right"
         android:textColor="@color/login_button_background"
         android:layout_marginTop="20dp"
-        android:padding="5dp"/>
+        android:padding="5dp"
+        android:clickable="true"/>
     <!-- end-->
 </LinearLayout>
