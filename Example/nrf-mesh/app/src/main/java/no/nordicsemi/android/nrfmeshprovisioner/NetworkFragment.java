@@ -53,7 +53,7 @@ import no.nordicsemi.android.nrfmeshprovisioner.viewmodels.SharedViewModel;
 
 public class NetworkFragment extends Fragment implements Injectable,
         NodeAdapter.OnItemClickListener {
-
+    private static final String TAG = "NetworkFragment";
     SharedViewModel mViewModel;
 
     @Inject
@@ -98,6 +98,22 @@ public class NetworkFragment extends Fragment implements Injectable,
         mViewModel.getProvisionedNodes().observe(this, nodes -> {
             if(!nodes.isEmpty()) {
                 noNetworksConfiguredView.setVisibility(View.GONE);
+                //edits started by ihub tribhuvan
+               // mViewModel.disconnect();
+//                if(mViewModel.getProvisionedNodes().getValue() == null || mViewModel.getProvisionedNodes().getValue().isEmpty()){
+//
+                    final Boolean isConnectedToNetwork = mViewModel.isConnectedToProxy().getValue();
+                    if(isConnectedToNetwork == null || !isConnectedToNetwork){
+                        Log.d(TAG, " "+ mViewModel.getProvisionedNodes().getValue());
+                        Log.d(TAG, "is not ConnectedToNetwork: trying to connect now...");
+                        final Intent scannerActivity = new Intent(getContext(), ProvisionedNodesScannerActivity.class);
+                        scannerActivity.putExtra(ProvisionedNodesScannerActivity.NETWORK_ID, "");
+                        startActivity(scannerActivity);
+                    }else{
+                        Log.d(TAG, "is ConnectedToNetwork: not trying to connect...");
+                    }
+//                }
+                // edits ended by ihub tribhuvan
             } else {
                 noNetworksConfiguredView.setVisibility(View.VISIBLE);
             }
@@ -114,6 +130,9 @@ public class NetworkFragment extends Fragment implements Injectable,
 
         mViewModel.getConnectedMeshNodeAddress().observe(this, unicastAddress -> mAdapter.selectConnectedMeshNode(unicastAddress));
 
+        Log.d(TAG, " "+ mViewModel.getProvisionedNodes().getValue());
+
+
         return rootView;
 
     }
@@ -125,7 +144,9 @@ public class NetworkFragment extends Fragment implements Injectable,
 
     @Override
     public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-        if(mViewModel.getProvisionedNodes().getValue() != null && !mViewModel.getProvisionedNodes().getValue().isEmpty()){
+
+
+      if(mViewModel.getProvisionedNodes().getValue() != null && !mViewModel.getProvisionedNodes().getValue().isEmpty()){
             final Boolean isConnectedToNetwork = mViewModel.isConnectedToProxy().getValue();
             if(isConnectedToNetwork != null && isConnectedToNetwork){
                 inflater.inflate(R.menu.disconnect, menu);
@@ -135,16 +156,19 @@ public class NetworkFragment extends Fragment implements Injectable,
         }
     }
 
+
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         final int id = item.getItemId();
         switch (id) {
             case R.id.action_connect:
+                Log.d(TAG, "action_connect: ");
                 final Intent scannerActivity = new Intent(getContext(), ProvisionedNodesScannerActivity.class);
                 scannerActivity.putExtra(ProvisionedNodesScannerActivity.NETWORK_ID, "");
                 startActivity(scannerActivity);
                 return true;
             case R.id.action_disconnect:
+                Log.d(TAG, "action_disconnect: ");
                 mViewModel.disconnect();
                 return true;
         }
