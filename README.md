@@ -59,13 +59,3 @@ To start using the library in your own project take a look at the followign snip
         mMeshManagerApi.loadMeshNetwork();
 ```
 The sample application uses the [Android BLE Library](https://github.com/NordicSemiconductor/Android-BLE-Library/) by Nordic Semiconductor ASA and is recommended to use this dependency in your application.
-
-## Author
-
-Mobile Applications Team, Nordic Semiconductor ASA.
-
-Contact: roshanrajaratnam <roshan.rajaratnam@nordicsemi.no>
-
-## License
-
-The Android-nRF-Mesh-Library is available under BSD 3-Clause license. See the LICENSE file for more info.
